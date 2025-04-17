@@ -142,25 +142,20 @@ f()
         typeset OPTIND=1
         typeset opt
 
-	n=0
         while getopts ":abcxyz" opt
         do
-		n+=1
-		if [[ n -gt 10 ]] ; then return 1 ; fi
                 echo opt: "$opt"
                 if [[ $opt = y ]]; then f -abc ; fi
         done
 }
 
 f -xyz')
-[ "$res" = "
-opt: x
+[ "$res" = "opt: x
 opt: y
 opt: a
 opt: b
 opt: c
-opt: z
-" ] || err $LINENO
+opt: z" ] || err $LINENO
 [ "$?" -eq 0 ] || err $LINENO
 rm -f $tmp-*
 echo $0 >> ./ok
