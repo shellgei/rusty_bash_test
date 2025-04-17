@@ -9,6 +9,7 @@ err () {
 
 export SUSH_COMPAT_TEST_MODE=0
 
+cd $(dirname $0)
 
 repo_dir=${1:-~/GIT/rusty_bash}
 test_dir="$PWD"
