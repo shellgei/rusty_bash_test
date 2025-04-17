@@ -10,7 +10,7 @@ err () {
 
 
 repo_dir=${2:-~/GIT/rusty_bash}
-test_dir="$(cd dirname $0 ; pwd)"
+test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
 

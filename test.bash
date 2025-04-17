@@ -11,7 +11,7 @@ export SUSH_COMPAT_TEST_MODE=0
 
 
 repo_dir=${1:-~/GIT/rusty_bash}
-test_dir="$(cd dirname $0 ; pwd)"
+test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
 
