@@ -23,20 +23,20 @@ cd "$test_dir"
 : > error
 : > ok
 
-./test_case.bash nobuild &
-./test_others.bash nobuild &
-./test_redirects.bash nobuild &
-./test_calculation.bash nobuild &
-./test_compound.bash nobuild &
-./test_job.bash nobuild &
-./test_brace.bash nobuild &
-./test_builtins.bash nobuild &
-./test_options.bash nobuild &
-./test_parameters.bash nobuild &
-./test_glob.bash nobuild &
-./test_ansi_c_quoting.bash nobuild &
-./test_fixed.bash nobuild &
-./test_param_substitutions.bash nobuild &
+./test_case.bash nobuild "$repo_dir" &
+./test_others.bash nobuild "$repo_dir" &
+./test_redirects.bash nobuild "$repo_dir" &
+./test_calculation.bash nobuild "$repo_dir" &
+./test_compound.bash nobuild "$repo_dir" &
+./test_job.bash nobuild "$repo_dir" &
+./test_brace.bash nobuild "$repo_dir" &
+./test_builtins.bash nobuild "$repo_dir" &
+./test_options.bash nobuild "$repo_dir" &
+./test_parameters.bash nobuild "$repo_dir" &
+./test_glob.bash nobuild "$repo_dir" &
+./test_ansi_c_quoting.bash nobuild "$repo_dir" &
+./test_fixed.bash nobuild "$repo_dir" &
+./test_param_substitutions.bash nobuild "$repo_dir" &
 
 wait 
 
