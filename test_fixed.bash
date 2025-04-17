@@ -120,6 +120,23 @@ acb" ] || err $LINENO
 res=$($com <<< 'IFS=/ ; set bob "tom dick harry" joe; echo "$*"')
 [ "$res" = "bob/tom dick harry/joe" ] || err $LINENO
 
+res=$($com <<< 'rev <<- EOF
+abc
+あいう
+EOF
+')
+[ "$res" == "cba
+ういあ" ] || err $LINENO
+
+res=$($com <<< 'rev <<- EOF
+	abc
+	あいう
+	EOF
+')
+[ "$res" == "cba
+ういあ" ] || err $LINENO
+
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
