@@ -14,6 +14,8 @@ test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
 
+rm -f /tmp/rusty_bash*
+
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 

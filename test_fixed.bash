@@ -19,6 +19,16 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'A=([3]=4); echo ${A[3]}')
+[ "$res" = "4" ] || err $LINENO
+
+res=$($com <<< 'declare -A C ; C=(["あ"]=abc) ; echo ${C[あ]}')
+[ "$res" = "abc" ] || err $LINENO
+
+
+res=$($com <<< 'sleep 1 & echo $!')
+[ "$res" -gt 0 ] || err $LINENO
+
 res=$($com <<< 'case "]" in [a]] ) echo NG ;; esac')
 [ "$res" = "" ] || err $LINENO
 
