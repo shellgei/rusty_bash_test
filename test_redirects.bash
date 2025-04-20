@@ -190,4 +190,20 @@ AAA
 )
 [ "$res" = 'abc' ] || err $LINENO
 
+res=$($com <<< 'rev <<- EOF
+abc
+あいう
+EOF
+')
+[ "$res" == "cba
+ういあ" ] || err $LINENO
+
+res=$($com <<< 'rev <<- EOF
+	abc
+	あいう
+	EOF
+')
+[ "$res" == "cba
+ういあ" ] || err $LINENO
+
 echo $0 >> ./ok

@@ -85,6 +85,18 @@ res=$($com <<< 'A=([3]=4); echo ${A[3]}')
 res=$($com <<< 'declare -A C ; C=(["あ"]=abc) ; echo ${C[あ]}')
 [ "$res" = "abc" ] || err $LINENO
 
+res=$($com <<< 'A=(
+[3]=4 #あいうえお
+[4]=5
+); echo ${A[3]}')
+[ "$res" = "4" ] || err $LINENO
+
+res=$($com <<< 'A=([3]=4); echo ${A[3]}')
+[ "$res" = "4" ] || err $LINENO
+
+res=$($com <<< 'declare -A C ; C=(["あ"]=abc) ; echo ${C[あ]}')
+[ "$res" = "abc" ] || err $LINENO
+
 
 rm -f $tmp-*
 echo $0 >> ./ok

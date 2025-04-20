@@ -139,4 +139,16 @@ if [ "$(uname)" = "Linux" ] ; then
 	[ "$?" -eq 0 ] || err $LINENO
 fi
 
+res=$($com <<< 'case "]" in [a]] ) echo NG ;; esac')
+[ "$res" = "" ] || err $LINENO
+
+res=$($com <<< 'case "]" in [\]] ) echo OK ;; esac')
+[ "$res" = "OK" ] || err $LINENO
+
+res=$($com <<< 'case "]" in []] ) echo OK ;; esac')
+[ "$res" = "OK" ] || err $LINENO
+
+res=$($com <<< 'case "]" in [^]] ) echo NG ;; esac')
+[ "$res" = "" ] || err $LINENO
+
 echo $0 >> ./ok

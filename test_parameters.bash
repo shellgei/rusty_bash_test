@@ -265,4 +265,9 @@ res=$($com <<< '__a=x; echo $__a ; echo $__a' )
 [ "$res" = "x
 x" ] || err $LINENO
 
+### $! ###
+
+res=$($com <<< 'sleep 1 & echo $!')
+[ "$res" -gt 0 ] || err $LINENO
+
 echo $0 >> ./ok

@@ -170,6 +170,9 @@ EOF
 res=$($com <<< 'A=1; readonly A ; A=2; echo $A' )
 [ "$res" = "1" ] || err $LINENO
 
+res=$($com <<< 'readonly x=1; x=2 ; echo $x')
+[ "$res" = "1" ] || err $LINENO
+
 # break command
 
 $com <<< 'while true ; do break ; done'
@@ -260,10 +263,67 @@ res=$($com <<< 'echo "a:b:" | ( IFS=" :" read x y; echo "($x)($y)" )')
 res=$($com <<< 'echo "a:b::" | ( IFS=" :" read x y; echo "($x)($y)" )')
 [ "$res" = "(a)(b::)" ] || err $LINENO
 
+cat << 'EOF' > $tmp-script
+echo OK | ( while read line ; do echo $line ; done )
+ああああああ！
+EOF
+res=$($com <<< "source $tmp-script")
+[ "$res" = "OK" ] || err $LINENO
+
 # set command
 
 res=$($com <<< 'set -- a b c ; echo $2')
 [ "$res" == "b" ] || err $LINENO
+
+[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
+cd "$test_dir"
+
+res=$($com <<< 'set bob "tom dick harry" joe; set $* ; echo $#')
+[ "$res" = "5" ] || err $LINENO
+
+res=$($com <<< 'IFS="" ; set bob "tom dick harry" joe; echo $* ; set $* ; echo $#')
+[ "$res" = "bob tom dick harry joe
+3" ] || err $LINENO
+
+res=$($com <<< 'IFS="/" ; set bob "tom dick harry" joe; echo $* ; set $* ; echo $#')
+[ "$res" = "bob tom dick harry joe
+3" ] || err $LINENO
+
+res=$($com <<< 'IFS="/" ; set bob "tom dick harry" joe; echo $* ; set ${*} ; echo $#')
+[ "$res" = "bob tom dick harry joe
+3" ] || err $LINENO
+
+res=$($com <<< 'IFS="/" ; set bob "tom dick harry" joe; echo $@ ; set $@ ; echo $#')
+[ "$res" = "bob tom dick harry joe
+3" ] || err $LINENO
+
+res=$($com <<< 'IFS="/" ; set bob "tom dick harry" joe; echo $@ ; set ${@} ; echo $#')
+[ "$res" = "bob tom dick harry joe
+3" ] || err $LINENO
+
+res=$($com <<< 'IFS=: ; set 1 2 3; b=$* ; set | grep "^b=" ')
+[ "$res" = "b=1:2:3" ] || err $LINENO
+
+# $ set | grep ^b
+# b=1:2:3
+res=$($com <<< 'IFS=: ; set 1 2 3; b=$* ; echo $b ; echo "$b"')
+[ "$res" = "1 2 3
+1:2:3" ] || err $LINENO
+
+res=$($com <<< 'set a b ; IFS=c ; echo $@ ; echo "$@" ')
+[ "$res" = "a b
+a b" ] || err $LINENO
+
+res=$($com <<< 'set a b ; IFS="" ; echo $@ ; echo "$@" ')
+[ "$res" = "a b
+a b" ] || err $LINENO
+
+res=$($com <<< 'set a b ; IFS=c ; echo $* ; echo "$*" ')
+[ "$res" = "a b
+acb" ] || err $LINENO
+
+res=$($com <<< 'IFS=/ ; set bob "tom dick harry" joe; echo "$*"')
+[ "$res" = "bob/tom dick harry/joe" ] || err $LINENO
 
 # shopt command
 
@@ -321,6 +381,10 @@ EOF
 )
 [ "$res" == "cd ~/G" ] || err $LINENO
 
+
+res=$($com <<< 'f () { local A=() ; A=(1 2) ; local A;  echo ${A[@]} ; } ; f')
+[ "$res" = "1 2" ] || err $LINENO
+
 ### declare ###
 
 res=$($com -c 'A=1 ; f () { local A ; declare -r A ; A=123 ; } ; f')
@@ -352,6 +416,13 @@ res=$($com <<< 'declare -i n; echo $(( c=(n+1) ))')
 
 res=$($com <<< 'declare -i n; echo $(( c+=(n+1) ))')
 [ "$res" = "1" ] || err $LINENO
+
+res=$($com <<< 'declare -i i=1 j=2 k=3
+echo $((i += j += k))
+echo $i,$j,$k
+')
+[ "$res" = "6
+6,5,3" ] || err $LINENO
 
 ### command ###
 
@@ -448,6 +519,28 @@ res=$($com <<< 'getopts :av:U:Rc:C:lF:i:x: _opt -a filedir ; echo $_opt')
 #?
 #
 #3" ] || err $LINENO
+
+res=$($com <<< '
+f()
+{
+        typeset OPTIND=1
+        typeset opt
+
+        while getopts ":abcxyz" opt
+        do
+                echo opt: "$opt"
+                if [[ $opt = y ]]; then f -abc ; fi
+        done
+}
+
+f -xyz')
+[ "$res" = "opt: x
+opt: y
+opt: a
+opt: b
+opt: c
+opt: z" ] || err $LINENO
+[ "$?" -eq 0 ] || err $LINENO
 
 
 ### printf ###
@@ -592,6 +685,9 @@ res=$($com <<< 'let "c=$((1+1))"; echo $c $?')
 
 res=$($com <<< 'let a=1; echo $a')
 [ "$res" = "1" ] || err $LINENO
+
+res=$($com <<< 'shopt -o -s posix')
+[ "$?" -eq "0" ] || err $LINENO
 
 echo $0 >> ./ok
 

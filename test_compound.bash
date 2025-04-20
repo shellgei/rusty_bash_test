@@ -896,6 +896,9 @@ EOF
 res=$($com <<< '[[ a =~ "." ]]')
 [ $? -eq 1 ] || err $LINENO
 
+res=$($com <<< 'echo ${#a[@]}')
+[ "$res" = "0" ] || err $LINENO
+
 
 ### `...` ###
 
