@@ -19,6 +19,15 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+cat << 'EOF' > $tmp-script
+echo $(cat << FIN | rev
+abc
+FIN
+echo def)
+EOF
+res=$($com $tmp-script)
+[ "$res" = "cba def" ] || err $LINENO
+
 res=$($com << 'EOF'
 z=$'\v\f\a\b'
 case $z in
