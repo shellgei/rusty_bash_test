@@ -74,6 +74,12 @@ res=$($com <<< 'f () { local A=() ; A=(1 2) ; local A;  echo ${A[@]} ; } ; f')
 [ "$res" = "1 2" ] || err $LINENO
 
 res=$($com <<< 'A=(
+[3]=4
+[4]=5
+); echo ${A[3]}')
+[ "$res" = "4" ] || err $LINENO
+
+res=$($com <<< 'A=(
 [3]=4 #あいうえお
 [4]=5
 ); echo ${A[3]}')

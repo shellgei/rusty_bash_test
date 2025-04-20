@@ -275,9 +275,6 @@ res=$($com <<< "source $tmp-script")
 res=$($com <<< 'set -- a b c ; echo $2')
 [ "$res" == "b" ] || err $LINENO
 
-[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
-cd "$test_dir"
-
 res=$($com <<< 'set bob "tom dick harry" joe; set $* ; echo $#')
 [ "$res" = "5" ] || err $LINENO
 

@@ -16,6 +16,12 @@ com="$repo_dir/target/release/sush"
 cd "$repo_dir"
 tmp=/tmp/$$
 
+[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
+cd "$test_dir"
+
+res=$($com <<< 'test=(first & second)')
+[ "$?" -eq "1" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
