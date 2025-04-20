@@ -19,6 +19,34 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'EOF'
+z=$'\v\f\a\b'
+case $z in
+	$'\v\f\a\b') echo ok ;;
+esac
+EOF
+)
+[ "$res" = "ok" ] || err $LINENO
+
+res=$($com <<< '
+cat << EOF | rev
+abc
+EOF
+')
+[ "$res" = "cba" ] || err $LINENO
+
+res=$($com <<< 'echo $"hello"')
+[ "$res" = "hello" ] || err $LINENO
+
+res=$($com <<< "echo $'\r\e\a' | xxd -ps")
+[ "$res" = "0d1b070a" ] || err $LINENO
+
+res=$($com <<< 'A=(1 2 3) ; declare -r A[1] ; A[0]=aaa ; echo ${A[@]}')
+[ "$res" = "1 2 3" ] || err $LINENO
+
+res=$($com <<< 'unset a ; a=abcde ; declare -a a ; echo ${a[0]}')
+[ "$res" = "abcde" ] || err $LINENO
+
 res=$($com <<< 'test=(first & second)')
 [ "$?" -eq "1" ] || err $LINENO
 
