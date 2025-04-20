@@ -25,6 +25,7 @@ cd "$test_dir"
 : > ok
 
 ./test_case.bash nobuild "$repo_dir" &
+./test_substitution.bash nobuild "$repo_dir" &
 ./test_others.bash nobuild "$repo_dir" &
 ./test_redirects.bash nobuild "$repo_dir" &
 ./test_calculation.bash nobuild "$repo_dir" &

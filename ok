@@ -1,9 +1,10 @@
 ./test_ansi_c_quoting.bash
-./test_param_substitutions.bash
 ./test_options.bash
-./test_redirects.bash
-./test_brace.bash
+./test_param_substitutions.bash
+./test_substitution.bash
 ./test_glob.bash
+./test_brace.bash
+./test_redirects.bash
 ./test_case.bash
 ./test_others.bash
 ./test_compound.bash
