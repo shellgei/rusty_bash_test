@@ -28,6 +28,36 @@ EOF
 res=$($com $tmp-script)
 [ "$res" = "cba def" ] || err $LINENO
 
+cat << 'EOF' > $tmp-script
+cat << FIN
+$'\x31'
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "$'\x31'" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+a=ABC
+cat << FIN
+$a
+DEF
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "ABC
+DEF" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+a=ABC
+cat << 'FIN'
+$a
+DEF
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = '$a
+DEF' ] || err $LINENO
+
 res=$($com << 'EOF'
 z=$'\v\f\a\b'
 case $z in
