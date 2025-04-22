@@ -58,6 +58,17 @@ res=$($com $tmp-script)
 [ "$res" = '$a
 DEF' ] || err $LINENO
 
+cat << 'EOF' > $tmp-script
+cat << FIN
+${none-a$'\01'b}
+${none-ab}
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "a$'\01'b
+ab" ] || err $LINENO
+
+
 res=$($com << 'EOF'
 z=$'\v\f\a\b'
 case $z in
