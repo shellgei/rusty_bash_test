@@ -19,6 +19,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'set abc abc; echo ${@/a/A}')
+[ "$res" = "Abc Abc" ] || err $LINENO
+
+res=$($com <<< 'set abc abc; echo ${*/a/A}')
+[ "$res" = "Abc Abc" ] || err $LINENO
+
 cat << 'EOF' > $tmp-script
 echo $(cat << FIN | rev
 abc
