@@ -19,6 +19,13 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< '
+cat << EOF | rev
+abc
+EOF
+')
+[ "$res" = "cba" ] || err $LINENO
+
 res=$($com << 'EOF'
 z=$'\v\f\a\b'
 case $z in
@@ -27,13 +34,6 @@ esac
 EOF
 )
 [ "$res" = "ok" ] || err $LINENO
-
-res=$($com <<< '
-cat << EOF | rev
-abc
-EOF
-')
-[ "$res" = "cba" ] || err $LINENO
 
 res=$($com <<< 'echo $"hello"')
 [ "$res" = "hello" ] || err $LINENO
