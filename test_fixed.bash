@@ -19,6 +19,41 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'EOF'
+IFS=$'\001'
+echo @$x@
+EOF
+)
+[ "$res" = "@@" ] || err $LINENO
+
+res=$($com << 'EOF'
+IFS=$'\001'
+echo a${x}b
+EOF
+)
+[ "$res" = "ab" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | ( rev )
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "cba" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | ( read x; echo $x )
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "abc" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | { read x; echo $x  ; }
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "abc" ] || err $LINENO
+
 res=$($com <<< 'set abc abc; echo ${@/a/A}')
 [ "$res" = "Abc Abc" ] || err $LINENO
 
