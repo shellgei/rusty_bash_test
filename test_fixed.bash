@@ -19,12 +19,139 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$(echo 'cat
+OH' | $com)
+[ "$res" = "OH" ] || err $LINENO
+
+## It works.
+cat << 'EOF' > $tmp-script
+read a
+echo @$a
+EOF
+chmod +x $tmp-script
+res=$(bash << EOF
+$com $tmp-script
+OH
+EOF
+)
+[ "$res" = "@OH" ] || err $LINENO
+
+
+res=$($com << EOF
+$com -c cat
+OH
+EOF
+)
+[ "$res" = "OH" ] || err $LINENO
+
+# It doesn't work.
+# Maybe the exec-on-close is applied to
+# the file discriptor of $com << EOF. 
+
+res=$($com << EOF
+$com $tmp-script
+OH
+EOF
+)
+[ "$res" = "@OH" ] || err $LINENO
+
 res=$($com <<< '
 cat << EOF | rev
 abc
 EOF
 ')
 [ "$res" = "cba" ] || err $LINENO
+
+res=$($com << 'EOF'
+IFS=$'\001'
+echo @$x@
+EOF
+)
+[ "$res" = "@@" ] || err $LINENO
+
+res=$($com << 'EOF'
+IFS=$'\001'
+echo a${x}b
+EOF
+)
+[ "$res" = "ab" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | ( rev )
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "cba" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | ( read x; echo $x )
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "abc" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | { read x; echo $x  ; }
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "abc" ] || err $LINENO
+
+res=$($com <<< 'set abc abc; echo ${@/a/A}')
+[ "$res" = "Abc Abc" ] || err $LINENO
+
+res=$($com <<< 'set abc abc; echo ${*/a/A}')
+[ "$res" = "Abc Abc" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo $(cat << FIN | rev
+abc
+FIN
+echo def)
+EOF
+res=$($com $tmp-script)
+[ "$res" = "cba def" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+cat << FIN
+$'\x31'
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "$'\x31'" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+a=ABC
+cat << FIN
+$a
+DEF
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "ABC
+DEF" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+a=ABC
+cat << 'FIN'
+$a
+DEF
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = '$a
+DEF' ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+cat << FIN
+${none-a$'\01'b}
+${none-ab}
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "a$'\01'b
+ab" ] || err $LINENO
+
 
 res=$($com << 'EOF'
 z=$'\v\f\a\b'
@@ -53,35 +180,4 @@ res=$($com <<< 'test=(first & second)')
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
-
-### issue 130 ###
-### input-line.sh test of Bash ###
-
-# It works.
-cat << 'EOF' > $tmp-script
-read a
-echo @$a
-EOF
-chmod +x $tmp-script
-res=$(bash << EOF
-$com $tmp-script
-OH
-EOF
-)
-[ "$res" = "@OH" ] || err $LINENO
-
-# It doesn't work.
-# Maybe the exec-on-close is applied to
-# the file discriptor of $com << EOF. 
-
-chmod +x $tmp-script
-res=$($com << EOF
-$com $tmp-script
-OH
-EOF
-)
-[ "$res" = "@OH" ] || err $LINENO
-
-res=$($com <<< 'a[n]=++n ; echo ${a[1]}')
-[ "$res" = "1" ] || err $LINENO
 

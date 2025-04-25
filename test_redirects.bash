@@ -206,4 +206,9 @@ res=$($com <<< 'rev <<- EOF
 [ "$res" == "cba
 ういあ" ] || err $LINENO
 
+# various
+
+res=$($com <<< 'echo $(sleep 1 ; echo abc) $(echo cde) > /dev/stdout')
+[ "$res" = "abc cde" ] || err $LINENO
+
 echo $0 >> ./ok
