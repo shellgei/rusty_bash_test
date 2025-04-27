@@ -19,6 +19,14 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+cat << 'EOF' > $tmp-script
+cat << FIN | grep '"'
+"$-"
+FIN
+EOF
+res=$($com $tmp-script)
+[ $? -eq 0 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
