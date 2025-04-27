@@ -19,6 +19,14 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'shopt -s expand_aliases; alias a="b=()"
+a')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'shopt -s expand_aliases; alias a="b=(1 2 3)"
+a;echo ${b[1]}') 
+[ "$res" = "2" ] || err $LINENO
+
 cat << 'EOF' > $tmp-script
 cat << FIN | grep '"'
 "$-"
