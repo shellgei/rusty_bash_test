@@ -321,4 +321,12 @@ EOF
 ')
 [ "$res" = "cba" ] || err $LINENO
 
+cat << 'EOF' > $tmp-script
+cat << FIN | grep '"'
+"$-"
+FIN
+EOF
+res=$($com $tmp-script)
+[ $? -eq 0 ] || err $LINENO
+
 echo $0 >> ./ok
