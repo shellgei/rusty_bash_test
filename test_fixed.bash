@@ -19,6 +19,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< '< /dev/null x=a ; echo $x')
+[ "$res" = "a" ] || err $LINENO
+
 res=$($com <<< 'shopt -s expand_aliases; alias a="b=()"
 a')
 [ $? -eq 0 ] || err $LINENO
