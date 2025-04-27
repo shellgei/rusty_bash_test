@@ -13,6 +13,7 @@ repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
+tmp=/tmp/$$
 
 rm -f /tmp/rusty_bash*
 
@@ -206,9 +207,118 @@ res=$($com <<< 'rev <<- EOF
 [ "$res" == "cba
 ういあ" ] || err $LINENO
 
+## It works.
+cat << 'EOF' > $tmp-script
+read a
+echo @$a
+EOF
+chmod +x $tmp-script
+res=$(bash << EOF
+$com $tmp-script
+OH
+EOF
+)
+[ "$res" = "@OH" ] || err $LINENO
+
+res=$($com << EOF
+$com $tmp-script
+OH
+EOF
+)
+[ "$res" = "@OH" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | ( rev )
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "cba" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | ( read x; echo $x )
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "abc" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo abc | { read x; echo $x  ; }
+unset x
+EOF
+res=$(cat $tmp-script | $com)
+[ "$res" = "abc" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo $(cat << FIN | rev
+abc
+FIN
+echo def)
+EOF
+res=$($com $tmp-script)
+[ "$res" = "cba def" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+cat << FIN
+$'\x31'
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "$'\x31'" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+a=ABC
+cat << FIN
+$a
+DEF
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "ABC
+DEF" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+a=ABC
+cat << 'FIN'
+$a
+DEF
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = '$a
+DEF' ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+cat << FIN
+${none-a$'\01'b}
+${none-ab}
+FIN
+EOF
+res=$($com $tmp-script)
+[ "$res" = "a$'\01'b
+ab" ] || err $LINENO
+
+
 # various
 
 res=$($com <<< 'echo $(sleep 1 ; echo abc) $(echo cde) > /dev/stdout')
 [ "$res" = "abc cde" ] || err $LINENO
+
+res=$(echo 'cat
+OH' | $com)
+[ "$res" = "OH" ] || err $LINENO
+
+res=$($com << EOF
+$com -c cat
+OH
+EOF
+)
+[ "$res" = "OH" ] || err $LINENO
+
+res=$($com <<< '
+cat << EOF | rev
+abc
+EOF
+')
+[ "$res" = "cba" ] || err $LINENO
 
 echo $0 >> ./ok

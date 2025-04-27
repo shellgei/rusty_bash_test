@@ -421,6 +421,12 @@ echo $i,$j,$k
 [ "$res" = "6
 6,5,3" ] || err $LINENO
 
+res=$($com <<< 'A=(1 2 3) ; declare -r A[1] ; A[0]=aaa ; echo ${A[@]}')
+[ "$res" = "1 2 3" ] || err $LINENO
+
+res=$($com <<< 'unset a ; a=abcde ; declare -a a ; echo ${a[0]}')
+[ "$res" = "abcde" ] || err $LINENO
+
 ### command ###
 
 res=$($com -c 'command cd /; pwd')
