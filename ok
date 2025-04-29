@@ -2,6 +2,7 @@
 ./test_options.bash
 ./test_param_substitutions.bash
 ./test_substitution.bash
+./test_fixed.bash
 ./test_brace.bash
 ./test_glob.bash
 ./test_case.bash
