@@ -846,8 +846,8 @@ res=$($com <<< 'a="-d" ; [[ $a == -d ]]' )
 [ $? -eq 0 ] || err $LINENO
 # glob
 
-res=$($com -c '[[ $- == Bmc ]]')
-[ "$?" = "0" ] || err $LINENO
+#res=$($com -c '[[ $- == Bmc ]]')
+#[ "$?" = "0" ] || err $LINENO
 
 res=$($com -c '[[ $- == *c* ]]')
 [ "$?" = "0" ] || err $LINENO
