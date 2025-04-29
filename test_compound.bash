@@ -13,6 +13,7 @@ repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
+tmp=/tmp/$$
 
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
@@ -845,7 +846,7 @@ res=$($com <<< 'a="-d" ; [[ $a == -d ]]' )
 [ $? -eq 0 ] || err $LINENO
 # glob
 
-res=$($com -c '[[ $- == Bc ]]')
+res=$($com -c '[[ $- == Bmc ]]')
 [ "$?" = "0" ] || err $LINENO
 
 res=$($com -c '[[ $- == *c* ]]')

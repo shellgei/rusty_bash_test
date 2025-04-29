@@ -234,4 +234,13 @@ res=$($com <<< 'case 1 in $(( 1/ 0 )) ) echo NG ;; *) echo NG; esac')
 res=$($com <<< 'x=0 y=1 ; case 1 in $((y=0)) ) ;; $((x=1)) ) ;& $((x=2)) ) echo $x.$y ;; esac')
 [ "$res" = "1.0" ] || err $LINENO
 
+res=$($com << 'EOF'
+z=$'\v\f\a\b'
+case $z in
+	$'\v\f\a\b') echo ok ;;
+esac
+EOF
+)
+[ "$res" = "ok" ] || err $LINENO
+
 echo $0 >> ./ok
