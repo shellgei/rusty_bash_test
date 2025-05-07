@@ -20,6 +20,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'echo >&3')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'exec 3>&2 ; echo >&3')
+[ $? -eq 0 ] || err $LINENO
+
 res=$($com <<< 'sleep 1 & a=$! ; wait -p b -n ; echo $((a -  b))')
 [ "$res" = "0" ] || err $LINENO
 
