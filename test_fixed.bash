@@ -20,6 +20,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com -o posix -c 'set -o | grep posix | grep on' )
+[ $? -eq 0 ] || err $LINENO
+
 res=$($com <<< 'echo >&3')
 [ $? -eq 1 ] || err $LINENO
 
