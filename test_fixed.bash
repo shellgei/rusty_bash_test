@@ -20,6 +20,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com -c 'set -m; sleep 1 & %%')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com -c 'sleep 1 & %%')
+[ $? -eq 1 ] || err $LINENO
+
 res=$($com -o posix -c 'set -o | grep posix | grep on' )
 [ $? -eq 0 ] || err $LINENO
 
