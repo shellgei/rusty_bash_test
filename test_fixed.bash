@@ -23,10 +23,10 @@ cd "$test_dir"
 res=$($com -c 'A=(~/:~/); echo $A | grep "~"')
 [ $? -eq 0 ] || err $LINENO
 
-res=$($com -c 'A[0]=~/:~/; echo $A | grep "~"')
+res=$($com -c 'A=~/:~/; echo $A | grep "~"')
 [ $? -eq 1 ] || err $LINENO
 
-res=$($com -c 'A=~/:~/; echo $A | grep "~"')
+res=$($com -c 'A[0]=~/:~/; echo $A | grep "~"')
 [ $? -eq 1 ] || err $LINENO
 
 res=$($com -c 'set -m; sleep 1 & %%')
