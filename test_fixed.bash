@@ -12,13 +12,22 @@ err () {
 
 repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
-com="$repo_dir/target/release/sush"
+com="$repo_dir/target/debug/sush"
 cd "$repo_dir"
 tmp=/tmp/$$
 
 
-[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
+[ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
+
+res=$($com -c 'A=(~/:~/); echo $A | grep "~"')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com -c 'A[0]=~/:~/; echo $A | grep "~"')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com -c 'A=~/:~/; echo $A | grep "~"')
+[ $? -eq 1 ] || err $LINENO
 
 res=$($com -c 'set -m; sleep 1 & %%')
 [ $? -eq 0 ] || err $LINENO
