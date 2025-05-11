@@ -20,6 +20,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com -c 'echo A=~/:~/ | grep "~"')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com -c 'echo =~/:~/ | grep "~"')
+[ $? -eq 0 ] || err $LINENO
+
 res=$($com -c 'A=(~/:~/); echo $A | grep "~"')
 [ $? -eq 0 ] || err $LINENO
 
