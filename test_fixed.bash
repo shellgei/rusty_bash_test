@@ -22,6 +22,9 @@ cd "$test_dir"
 res=$($com -c 'set +m; shopt -s lastpipe; echo a | read b; echo $b:$b')
 [ "$res" = "a:a" ] || err $LINENO
 
+res=$($com -c 'a=(abc) ; unset a[0]; echo ${a}')
+[ "$res" = "" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
