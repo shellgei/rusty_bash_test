@@ -546,6 +546,18 @@ res=$($com <<< 'cd /; cd /etc; echo ~+; echo ~-')
 [ "$res" == "/etc
 /" ] || err $LINENO
 
+res=$($com -c 'echo =~/:~/ | grep "~"')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com -c 'A=(~/:~/); echo $A | grep "~"')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com -c 'A=~/:~/; echo $A | grep "~"')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com -c 'A[0]=~/:~/; echo $A | grep "~"')
+[ $? -eq 1 ] || err $LINENO
+
 
 # split
 
@@ -661,5 +673,35 @@ res=$($com <<< 'echo ]')
 
 res=$($com <<< 'echo $"hello"')
 [ "$res" = "hello" ] || err $LINENO
+
+### ALIAS ###
+
+res=$($com <<< "shopt -s expand_aliases;
+alias a=
+a")
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< "shopt -s expand_aliases;
+alias a=#
+a")
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< "shopt -s expand_aliases;
+alias a='echo b'
+a")
+[ "$res" = "b" ] || err $LINENO
+
+res=$($com -c "shopt -s expand_aliases;
+alias a='echo b'
+a")
+[ "$res" = "b" ] || err $LINENO
+
+res=$($com <<< 'shopt -s expand_aliases; alias a="b=()"
+a')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'shopt -s expand_aliases; alias a="b=(1 2 3)"
+a;echo ${b[1]}') 
+[ "$res" = "2" ] || err $LINENO
 
 echo $0 >> ./ok

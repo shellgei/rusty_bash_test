@@ -297,6 +297,13 @@ res=$($com $tmp-script)
 [ "$res" = "a$'\01'b
 ab" ] || err $LINENO
 
+cat << 'EOF' > $tmp-script
+cat << FIN | grep '"'
+"$-"
+FIN
+EOF
+res=$($com $tmp-script)
+[ $? -eq 0 ] || err $LINENO
 
 # various
 
@@ -320,5 +327,14 @@ abc
 EOF
 ')
 [ "$res" = "cba" ] || err $LINENO
+
+res=$($com <<< 'echo >&3')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'exec 3>&2 ; echo >&3')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< '< /dev/null x=a ; echo $x')
+[ "$res" = "a" ] || err $LINENO
 
 echo $0 >> ./ok

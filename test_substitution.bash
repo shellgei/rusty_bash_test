@@ -104,6 +104,9 @@ res=$($com <<< 'declare -A C ; C=(["あ"]=abc) ; echo ${C[あ]}')
 [ "$res" = "abc" ] || err $LINENO
 
 
+res=$($com -c 'v=$(echo "" ; echo "" ; echo ""); [[ "$v" == "" ]]')
+[ $? -eq 0 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit

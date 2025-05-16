@@ -70,10 +70,13 @@ res=$($com <<< 'set -o pipefail; set -e; false | true ; echo NG')
 res=$($com <<< 'set +B; echo {a,b}')
 [ "$res" == "{a,b}" ] || err $LINENO
 
-### noglob
+### -o
 
 res=$($com <<< 'set -o noglob; echo /etc/*')
 [ "$res" = "/etc/*" ] || err $LINENO
+
+res=$($com -o posix -c 'set -o | grep posix | grep on' )
+[ $? -eq 0 ] || err $LINENO
 
 
 echo $0 >> ./ok

@@ -27,4 +27,17 @@ echo "$res" | grep -F '[3]+ ' || err $LINENO
 res=$($com <<< 'sleep 5 | rev | cat & sleep 1 ; killall -SIGSTOP cat ; jobs')
 echo "$res" | grep Stopped || err $LINENO
 
+### JOBSPEC ###
+
+res=$($com -c 'set -m; sleep 1 & %%')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com -c 'sleep 1 & %%')
+[ $? -eq 1 ] || err $LINENO
+
+### WAIT ###
+
+res=$($com <<< 'sleep 1 & a=$! ; wait -p b -n ; echo $((a -  b))')
+[ "$res" = "0" ] || err $LINENO
+
 echo $0 >> ./ok
