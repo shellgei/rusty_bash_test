@@ -25,6 +25,12 @@ res=$($com -c 'set +m; shopt -s lastpipe; echo a | read b; echo $b:$b')
 res=$($com -c 'a=(abc) ; unset a[0]; echo ${a}')
 [ "$res" = "" ] || err $LINENO
 
+res=$($com -c 'a=(abc def) ; unset a[0]; echo ${a}')
+[ "$res" = "" ] || err $LINENO
+
+res=$($com -c 'a=(def) ; unset a[0]; echo ${a[@]}')
+[ "$res" = "" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
