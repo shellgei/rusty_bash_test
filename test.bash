@@ -16,6 +16,7 @@ test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
 
+cargo build || err $LINENO
 cargo build --release || err $LINENO
 cargo --version
 
