@@ -19,6 +19,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com -c 'y=$((1 ? 20 : x=2))')
+[ $? -eq 1 ] || err $LINENO
+
 res=$($com -c 'set +m; shopt -s lastpipe; echo a | read b; echo $b:$b')
 [ "$res" = "a:a" ] || err $LINENO
 
