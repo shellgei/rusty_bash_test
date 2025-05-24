@@ -19,6 +19,31 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'trap "echo hoge" EXIT; trap')
+[ "$res" == "trap -- 'echo hoge' EXIT
+hoge" ] || err $LINENO
+
+res=$($com <<< 'trap "echo hoge" SIGHUP; trap')
+[ "$res" == "trap -- 'echo hoge' SIGHUP" ] || err $LINENO
+
+res=$($com <<< 'trap "echo hoge" 1; trap')
+[ "$res" == "trap -- 'echo hoge' SIGHUP" ] || err $LINENO
+
+res=$($com <<< 'exec hohooh ; echo NG')
+[ "$res" == "" ] || err $LINENO
+
+res=$($com <<< 'shopt -s execfail ; exec hohooh ; echo OK')
+[ "$res" == "OK" ] || err $LINENO
+
+res=$($com <<< 'set -- -abc ; echo $1')
+[ "$res" == "-abc" ] || err $LINENO
+
+res=$($com <<< 'set -- -m ; echo $1')
+[ "$res" == "-m" ] || err $LINENO
+
+res=$($com <<< 'set -- a b c ; echo $0')
+[ "$res" != "--" ] || err $LINENO
+
 res=$($com -c 'y=$((1 ? 20 : x=2))')
 [ $? -eq 1 ] || err $LINENO
 
