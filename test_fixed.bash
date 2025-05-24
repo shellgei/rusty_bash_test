@@ -19,6 +19,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< "set -a ; _____A=3 ; env | grep _____A")
+[ "$res" == "_____A=3" ] || err $LINENO
+
+res=$($com <<< "set -a ; _____A=3 ; unset _____A; env | grep _____A")
+[ "$res" == "" ] || err $LINENO
+
 res=$($com <<< "set -C ; echo a > $tmp-hoge ; echo b > $tmp-hoge; cat $tmp-hoge")
 [ "$res" == "a" ] || err $LINENO
 
