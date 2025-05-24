@@ -19,6 +19,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< "set -C ; echo a > $tmp-hoge ; echo b > $tmp-hoge; cat $tmp-hoge")
+[ "$res" == "a" ] || err $LINENO
+
 res=$($com <<< 'trap "echo hoge" EXIT; trap')
 [ "$res" == "trap -- 'echo hoge' EXIT
 hoge" ] || err $LINENO
