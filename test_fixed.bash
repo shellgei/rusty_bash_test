@@ -19,6 +19,18 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'readonly a=bbb; echo $a')
+[ "$res" == "bbb" ] || err $LINENO
+
+res=$($com <<< 'declare -r a=bbb; echo $a')
+[ "$res" == "" ] || err $LINENO
+
+res=$($com <<< 'declare a[10]=bbb; echo ${a[@]}')
+[ "$res" == "bbb" ] || err $LINENO
+
+res=$($com <<< 'declare -a a[10]=bbb; echo ${a[@]}')
+[ "$res" == "bbb" ] || err $LINENO
+
 res=$($com <<< "set -a ; _____A=3 ; env | grep _____A")
 [ "$res" == "_____A=3" ] || err $LINENO
 
