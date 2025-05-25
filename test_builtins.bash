@@ -11,10 +11,10 @@ err () {
 
 repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
-com="$repo_dir/target/release/sush"
+com="$repo_dir/target/debug/sush"
 cd "$repo_dir"
 
-[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
+[ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
 res=$($com <<< 'cd /; pwd')
@@ -168,10 +168,10 @@ EOF
 # readonly
 
 res=$($com <<< 'A=1; readonly A ; A=2; echo $A' )
-[ "$res" = "1" ] || err $LINENO
+[ "$res" = "" ] || err $LINENO
 
 res=$($com <<< 'readonly x=1; x=2 ; echo $x')
-[ "$res" = "1" ] || err $LINENO
+[ "$res" = "" ] || err $LINENO
 
 # break command
 

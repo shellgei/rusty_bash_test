@@ -12,11 +12,11 @@ err () {
 
 repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
-com="$repo_dir/target/release/sush"
+com="$repo_dir/target/debug/sush"
 cd "$repo_dir"
 tmp=/tmp/$$
 
-[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
+[ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
 res=$($com <<< 'A=/*; echo $A | grep -q "*"')
