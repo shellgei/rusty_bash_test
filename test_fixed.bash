@@ -19,6 +19,15 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'declare -ai A ; a[0]=1+1; echo ${a[0]}')
+[ "$res" == '2' ] || err $LINENO
+
+res=$($com <<< 'a[0]=A; a[1]=B ; unset a[0]; echo ${#a[@]}')
+[ "$res" == '1' ] || err $LINENO
+
+res=$($com <<< 'a=1; declare -A a; declare -A | grep " a="')
+[ "$res" == 'declare -A a=([0]="1" )' ] || err $LINENO
+
 res=$($com <<< 'readonly a=bbb; echo $a')
 [ "$res" == "bbb" ] || err $LINENO
 
