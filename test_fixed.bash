@@ -19,6 +19,21 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'echo efgh | ( read x[1] ; echo ${x[1]} )')
+[ "$res" == 'efgh' ] || err $LINENO
+
+res=$($com <<< 'a=([]=a [1]=b) ; echo ${a[1]}')
+[ "$res" == 'b' ] || err $LINENO
+
+res=$($com <<< 'a=(1 2 3) ; unset a[*]; echo ${a[@]}')
+[ "$res" == '' ] || err $LINENO
+
+res=$($com <<< 'a=(1 2 3) ; unset a[@]; echo ${a[@]}')
+[ "$res" == '' ] || err $LINENO
+
+res=$($com <<< 'a=(1 2 3) ; echo ${a[    ]}')
+[ "$res" == '1' ] || err $LINENO
+
 res=$($com <<< 'd=([5]=aaa); echo "${d[@]}"')
 [ "$res" == 'aaa' ] || err $LINENO
 
