@@ -34,6 +34,18 @@ res=$($com <<< 'a=(1 2 3) ; echo ${a[@]: -2:2}')
 res=$($com <<< 'a=(1 2 3) ; echo ${a[@]: -5:2}')
 [ "$res" == '' ] || err $LINENO
 
+res=$($com <<< 'x=([1]="" [2]="" [3]=a [5]=b) ; echo "${x[@]:3:2}"')
+[ "$res" == "a b" ] || err $LINENO
+
+res=$($com <<< '
+declare -i -a iarray
+iarray=( 2+4 1+6 7+2 )
+echo ${iarray[@]}')
+[ "$res" == "6 7 9" ] || err $LINENO
+
+res=$($com <<< 'x=(1 2) ; IFS=""; echo "${x[*]}"')
+[ "$res" == "12" ] || err $LINENO
+
 res=$($com <<< 'echo efgh | ( read x[1] ; echo ${x[1]} )')
 [ "$res" == 'efgh' ] || err $LINENO
 
