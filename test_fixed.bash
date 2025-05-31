@@ -19,6 +19,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'let a=(5 + 3) b=(4 + 7); echo $a $b')
+[ "$res" == '8 11' ] || err $LINENO
+
+res=$($com <<< 'f () { typeset IFS=: ; echo $1 ; } ; f a:b')
+[ "$res" == 'a b' ] || err $LINENO
+
 res=$($com <<< 'a=abcdef ; echo ${a: -2:2}')
 [ "$res" == 'ef' ] || err $LINENO
 
