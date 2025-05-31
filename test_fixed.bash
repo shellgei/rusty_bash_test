@@ -19,6 +19,15 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< '
+declare -i -a iarray
+iarray=( 2+4 1+6 7+2 )
+echo ${iarray[@]}')
+[ "$res" == "6 7 9" ] || err $LINENO
+
+res=$($com <<< 'x=(1 2) ; IFS=""; echo "${x[*]}"')
+[ "$res" == "12" ] || err $LINENO
+
 res=$($com <<< 'echo efgh | ( read x[1] ; echo ${x[1]} )')
 [ "$res" == 'efgh' ] || err $LINENO
 
