@@ -19,6 +19,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'x=([1]="" [2]="" [3]=a [5]=b) ; echo "${x[@]:3:2}"')
+[ "$res" == "a b" ] || err $LINENO
+
 res=$($com <<< '
 declare -i -a iarray
 iarray=( 2+4 1+6 7+2 )
