@@ -22,6 +22,9 @@ cd "$test_dir"
 #res=$($com <<< 'let a=(5 + 3) b=(4 + 7); echo $a $b')
 #[ "$res" == '8 11' ] || err $LINENO
 
+res=$($com <<< 'declare -iA a ; a["hoge"]=1+1; echo ${a["hoge"]}')
+[ "$res" == '2' ] || err $LINENO
+
 res=$($com <<< 'f () { typeset IFS=: ; echo $1 ; } ; f a:b')
 [ "$res" == 'a b' ] || err $LINENO
 
