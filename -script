@@ -1,2 +1,0 @@
-echo OK | ( while read line ; do echo $line ; done )
-ああああああ！
