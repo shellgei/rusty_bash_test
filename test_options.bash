@@ -78,5 +78,14 @@ res=$($com <<< 'set -o noglob; echo /etc/*')
 res=$($com -o posix -c 'set -o | grep posix | grep on' )
 [ $? -eq 0 ] || err $LINENO
 
+### -m
+
+res=$($com -c 'set +m; shopt -s lastpipe; echo a | read b; echo $b:$b')
+[ "$res" = "a:a" ] || err $LINENO
+
+### shopt ###
+
+res=$($com <<< 'shopt -s execfail ; exec hohooh ; echo OK')
+[ "$res" == "OK" ] || err $LINENO
 
 echo $0 >> ./ok

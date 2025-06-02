@@ -630,31 +630,6 @@ b" ] || err $LINENO
 res=$($com <<< 'echo `echo aaa`' )
 [ "$res" = "aaa" ] || err $LINENO
 
-# array
-
-res=$($com <<< 'A=( a b ); echo ${A[1]}')
-[ "$res" == "b" ] || err $LINENO
-
-res=$($com <<< 'A=( a b ); echo ${A[5 -4 ]}')
-[ "$res" == "b" ] || err $LINENO
-
-res=$($com <<< 'A=( a b ); B=1; echo ${A[$B]}')
-[ "$res" == "b" ] || err $LINENO
-
-res=$($com <<< 'A=( a b ); echo ${A[@]}')
-[ "$res" == "a b" ] || err $LINENO
-
-res=$($com <<< 'A=( a b ); A[0]=c ; echo ${A[@]}')
-[ "$res" == "c b" ] || err $LINENO
-
-res=$($com <<< 'A=( a b ); A[0]=( 1 2 )')
-[ "$?" == 1 ] || err $LINENO
-
-res=$($com <<< 'A=( a b ); A[]=1')
-[ "$?" == 1 ] || err $LINENO
-
-res=$($com <<< 'test=(first & second)')
-[ "$?" -eq "1" ] || err $LINENO
 
 ### PROCESS SUBSTITUTION ###
 

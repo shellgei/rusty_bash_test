@@ -8,7 +8,7 @@ err () {
 	exit 1
 }
 
-
+tmp=/tmp/$$
 repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
 com="$repo_dir/target/debug/sush"
@@ -115,6 +115,30 @@ res=$($com <<< 'set 1 2 3 ; eval -- "a=(\"\$@\")"; echo ${a[0]}')
 res=$($com <<< 'a=aaa; eval b=\$a; echo $b')
 [ "$res" = "aaa" ] || err $LINENO
 
+### set ###
+
+res=$($com <<< "set -a ; _____A=3 ; env | grep _____A")
+[ "$res" == "_____A=3" ] || err $LINENO
+
+res=$($com <<< "set -a ; _____A=3 ; unset _____A; env | grep _____A")
+[ "$res" == "" ] || err $LINENO
+
+res=$($com <<< "set -a ; _____A+=3 ; env | grep _____A")
+[ "$res" == "_____A=3" ] || err $LINENO
+unset _____A
+
+res=$($com <<< "set -C ; echo a > $tmp-hoge ; echo b > $tmp-hoge; cat $tmp-hoge")
+[ "$res" == "a" ] || err $LINENO
+
+res=$($com <<< 'set -- -abc ; echo $1')
+[ "$res" == "-abc" ] || err $LINENO
+
+res=$($com <<< 'set -- -m ; echo $1')
+[ "$res" == "-m" ] || err $LINENO
+
+res=$($com <<< 'set -- a b c ; echo $0')
+[ "$res" != "--" ] || err $LINENO
+
 ### unset
 
 res=$($com <<< 'A=aaa ; unset A ; echo $A')
@@ -133,6 +157,15 @@ res=$($com <<< 'A () { echo aaa ; } ; unset -f A ; A')
 [ "$res" = "" ] || err $LINENO
 
 res=$($com <<< 'A () { echo aaa ; } ; unset A ; A')
+[ "$res" = "" ] || err $LINENO
+
+res=$($com -c 'a=(abc) ; unset a[0]; echo ${a}')
+[ "$res" = "" ] || err $LINENO
+
+res=$($com -c 'a=(abc def) ; unset a[0]; echo ${a}')
+[ "$res" = "" ] || err $LINENO
+
+res=$($com -c 'a=(def) ; unset a[0]; echo ${a[@]}')
 [ "$res" = "" ] || err $LINENO
 
 # builtin command
@@ -165,7 +198,10 @@ EOF
 )
 [ "$res" = "1" ] || err $LINENO
 
-# readonly
+### readonly ###
+
+res=$($com <<< 'readonly a=bbb; echo $a')
+[ "$res" == "bbb" ] || err $LINENO
 
 res=$($com <<< 'A=1; readonly A ; A=2; echo $A' )
 [ "$res" = "" ] || err $LINENO
@@ -427,6 +463,15 @@ res=$($com <<< 'A=(1 2 3) ; declare -r A[1] ; A[0]=aaa ; echo ${A[@]}')
 res=$($com <<< 'unset a ; a=abcde ; declare -a a ; echo ${a[0]}')
 [ "$res" = "abcde" ] || err $LINENO
 
+res=$($com <<< 'declare -r a=bbb; echo $a')
+[ "$res" == "" ] || err $LINENO
+
+res=$($com <<< 'declare a[10]=bbb; echo ${a[@]}')
+[ "$res" == "bbb" ] || err $LINENO
+
+res=$($com <<< 'declare -a a[10]=bbb; echo ${a[@]}')
+[ "$res" == "bbb" ] || err $LINENO
+
 ### command ###
 
 res=$($com -c 'command cd /; pwd')
@@ -497,31 +542,31 @@ res=$($com <<< 'getopts :av:U:Rc:C:lF:i:x: _opt -a filedir ; echo $_opt')
 res=$($com <<< 'getopts :av:U:Rc:C:lF:i:x: _opt -a filedir ; echo $_opt')
 [ "$res" = "a" ] || err $LINENO
 
-### this test is not passed only when invoked from this script ###
-#res=$($com << 'EOF'
-#getopts :alF: _opt -aF : paths a:b
-#echo $_opt
-#echo $OPTARG
-#echo $OPTIND
-#getopts :alF: _opt -aF : paths a:b
-#echo $_opt
-#echo $OPTARG
-#echo $OPTIND
-#getopts :alF: _opt -aF : paths a:b
-#echo $_opt
-#echo $OPTARG
-#echo $OPTIND
-#EOF
-#)
-#[ "$res" = "a
-#
-#1
-#F
-#:
-#3
-#?
-#
-#3" ] || err $LINENO
+## this test is not passed only when invoked from this script ###
+res=$($com << 'EOF'
+getopts :alF: _opt -aF : paths a:b
+echo $_opt
+echo $OPTARG
+echo $OPTIND
+getopts :alF: _opt -aF : paths a:b
+echo $_opt
+echo $OPTARG
+echo $OPTIND
+getopts :alF: _opt -aF : paths a:b
+echo $_opt
+echo $OPTARG
+echo $OPTIND
+EOF
+)
+[ "$res" = "a
+
+1
+F
+:
+3
+?
+
+3" ] || err $LINENO
 
 res=$($com <<< '
 f()
@@ -653,6 +698,16 @@ res=$($com <<< 'trap "echo hoge" EXIT; echo fuge')
 [ "$res" = "fuge
 hoge" ] || err $LINENO
 
+res=$($com <<< 'trap "echo hoge" EXIT; trap')
+[ "$res" == "trap -- 'echo hoge' EXIT
+hoge" ] || err $LINENO
+
+res=$($com <<< 'trap "echo hoge" SIGHUP; trap')
+[ "$res" == "trap -- 'echo hoge' SIGHUP" ] || err $LINENO
+
+res=$($com <<< 'trap "echo hoge" 1; trap')
+[ "$res" == "trap -- 'echo hoge' SIGHUP" ] || err $LINENO
+
 ### type ###
 
 res=$($com <<< 'type bash | grep "bash is /"') 
@@ -691,6 +746,16 @@ res=$($com <<< 'let a=1; echo $a')
 
 res=$($com <<< 'shopt -o -s posix')
 [ "$?" -eq "0" ] || err $LINENO
+
+### typeset ###
+
+res=$($com <<< 'f () { typeset IFS=: ; echo $1 ; } ; f a:b')
+[ "$res" == 'a b' ] || err $LINENO
+
+### exec ###
+
+res=$($com <<< 'exec hohooh ; echo NG')
+[ "$res" == "" ] || err $LINENO
 
 echo $0 >> ./ok
 

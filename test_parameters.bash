@@ -18,6 +18,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'a=abcdef ; echo ${a: -2:2}')
+[ "$res" == 'ef' ] || err $LINENO
+
+res=$($com <<< 'a=abcdef ; echo ${a: -7:2}')
+[ "$res" == '' ] || err $LINENO
+
 ### RANDOM ###
 
 res=$($com -c '[[ "$RANDOM" -ne "$RANDOM" ]]')
@@ -51,37 +57,12 @@ res=$($com -c 'SECONDS=-10 ; sleep 1 ; echo $SECONDS')
 [[ "$res" -eq -9 ]] || err $LINENO
 
 
-### ARRAY ###
-
-res=$($com <<< 'declare -a A; A[0]=bbb; echo ${A[aaa]}')
-[ "$res" == "bbb" ] || err $LINENO
-
-res=$($com <<< 'a=aaa; echo ${a[@]}')
-[ "$res" = 'aaa' ] || err $LINENO
-
 ### INVALID REF ###
 
 res=$($com <<< 'a= ; echo ${a[@]}')
 [ "$?" -eq 0 ] || err $LINENO
 [ "$res" = "" ] || err $LINENO
 
-### ASSOCIATED ARRAY ###
-
-res=$($com <<< 'declare -A A; A[aaa]=bbb; echo ${A[aaa]}')
-[ "$res" == "bbb" ] || err $LINENO
-
-res=$($com <<< 'declare -A A; A[aaa]=bbb ;A[ccc]=ddd ; echo ${A[@]}')
-[ "$res" == "ddd bbb" -o "$res" == "bbb ddd" ] || err $LINENO
-
-res=$($com <<< 'B=ccc; declare -A A; A[aaa]=bbb ;A[ccc]=ddd ; echo ${A[$B]}')
-[ "$res" == "ddd" ] || err $LINENO
-
-res=$($com <<< 'declare -a arr ; arr=bbb ; echo ${arr[0]}')
-[ "$res" == "bbb" ] || err $LINENO
-
-res=$($com <<< 'declare -A a; echo ${a[aaa]}')
-[ "$?" = "0" ] || err $LINENO
-[ "$res" = "" ] || err $LINENO
 
 ### FUNCNAME ###
 

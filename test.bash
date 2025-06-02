@@ -40,6 +40,7 @@ cd "$test_dir"
 ./test_ansi_c_quoting.bash nobuild "$repo_dir" &
 ./test_fixed.bash nobuild "$repo_dir" &
 ./test_param_substitutions.bash nobuild "$repo_dir" &
+./test_array.bash nobuild "$repo_dir" &
 
 wait 
 
