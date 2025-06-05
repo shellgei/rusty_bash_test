@@ -464,7 +464,7 @@ res=$($com <<< 'unset a ; a=abcde ; declare -a a ; echo ${a[0]}')
 [ "$res" = "abcde" ] || err $LINENO
 
 res=$($com <<< 'declare -r a=bbb; echo $a')
-[ "$res" == "" ] || err $LINENO
+[ "$res" == "bbb" ] || err $LINENO
 
 res=$($com <<< 'declare a[10]=bbb; echo ${a[@]}')
 [ "$res" == "bbb" ] || err $LINENO

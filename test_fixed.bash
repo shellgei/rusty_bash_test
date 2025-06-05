@@ -19,8 +19,11 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-#res=$($com <<< 'let a=(5 + 3) b=(4 + 7); echo $a $b')
-#[ "$res" == '8 11' ] || err $LINENO
+res=$($com <<< 'let a=(5 + 3) b=(4 + 7); echo $a $b')
+[ "$res" == '8 11' ] || err $LINENO
+
+res=$($com <<< 'echo $(eval echo b)')
+[ "$res" == 'b' ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
