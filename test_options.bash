@@ -13,9 +13,20 @@ repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
 com="$repo_dir/target/release/sush"
 cd "$repo_dir"
+tmp=/tmp/$$
 
 [ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
+
+cat << 'EOF' > $tmp-script
+echo $- | grep -q e ; echo $?
+echo $@
+EOF
+chmod +x $tmp-script
+
+res=$($com -e $tmp-script -a -b -c)
+[ "$res" == "0
+-a -b -c" ] || err $LINENO
 
 ### -c
 
