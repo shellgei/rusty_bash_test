@@ -18,6 +18,25 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+#res=$($com << 'EOF'
+#a2=("-iname '"abc "-iname '"def)
+#echo ${a2[0]}
+#echo ${a2[1]}
+#EOF
+#)
+#[ "$res" == "-iname 'abc
+#-iname 'def" ] || err $LINENO
+
+res=$($com << 'EOF'
+a=(abc def)
+eval a2=("${a[@]/#/\"-iname \'\"}")
+echo ${a2[0]}
+echo ${a2[1]}
+EOF
+)
+[ "$res" == "-iname 'abc
+-iname 'def" ] || err $LINENO
+
 res=$($com << 'EOF'
 IFS=
 A=(bob 'tom dick harry' joe)
