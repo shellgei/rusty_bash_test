@@ -15,18 +15,35 @@ com="$repo_dir/target/debug/sush"
 cd "$repo_dir"
 tmp=/tmp/$$
 
-
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-#res=$($com << 'EOF'
-#a=('a b' 'c d' 'e f')
-#IFS=
-#set ${a[@]:1:2}
-#echo $2
-#EOF
-#)
-#[ "$res" == "e f" ] || err $LINENO
+res=$($com << 'EOF'
+IFS=
+A=(bob 'tom dick harry' joe)
+set ${A[*]}
+echo $# 
+EOF
+)
+[ "$res" == '3' ] || err $LINENO
+
+res=$($com << 'EOF'
+a=('a b' 'c d' 'e f')
+IFS=
+set ${a[@]}
+echo $2
+EOF
+)
+[ "$res" == "c d" ] || err $LINENO
+
+res=$($com << 'EOF'
+a=('a b' 'c d' 'e f')
+IFS=
+set ${a[@]:1:2}
+echo $2
+EOF
+)
+[ "$res" == "e f" ] || err $LINENO
 
 
 res=$($com << 'EOF'
