@@ -19,6 +19,27 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'EOF'
+echo "${dbg-'"'hey}"
+EOF
+)
+[ "$res" == "''hey" ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo $- | grep -q e ; echo $?
+echo $@
+EOF
+chmod +x $tmp-script
+
+res=$($com -e $tmp-script -a -b -c)
+[ "$res" == "0
+-a -b -c" ] || err $LINENO
+
+res=$($com -e $tmp-script -a -bc)
+[ "$res" == "0
+-a -bc" ] || err $LINENO
+
+
 res=$($com <<< 'let a=(5 + 3) b=(4 + 7); echo $a $b')
 [ "$res" == '8 11' ] || err $LINENO
 
