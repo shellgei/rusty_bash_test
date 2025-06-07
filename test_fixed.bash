@@ -19,6 +19,16 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+#res=$($com << 'EOF'
+#a=('a b' 'c d' 'e f')
+#IFS=
+#set ${a[@]:1:2}
+#echo $2
+#EOF
+#)
+#[ "$res" == "e f" ] || err $LINENO
+
+
 res=$($com << 'EOF'
 echo "${dbg-'"'hey}"
 EOF
