@@ -19,11 +19,13 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 # this test case is never fulfilled until we use String type
-res=$($com -b <<- FIN
-echo -n $'\xdb' | xxd -p
+if [ "$(uname)" = Linux ] ; then
+    res=$($com -b <<- FIN
+    echo -n $'\xdb' | xxd -p
 FIN
-)
-[ "$res" == "db" ] || err $LINENO
+    )
+    [ "$res" == "db" ] || err $LINENO
+fi
 
 res=$($com <<- 'FIN'
 echo $'aaa'
