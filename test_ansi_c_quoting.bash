@@ -19,11 +19,11 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 # this test case is never fulfilled until we use String type
-#res=$($com <<- FIN
-#echo -n $'\xdb' | xxd -p
-#FIN
-#)
-#[ "$res" == "db" ] || err $LINENO
+res=$($com <<- FIN
+echo -n $'\xdb' | xxd -p
+FIN
+)
+[ "$res" == "db" ] || err $LINENO
 
 res=$($com <<- 'FIN'
 echo $'aaa'
@@ -49,7 +49,6 @@ echo $'\110\19\9\477\x40\x7A\x7a\x9Z'
 FIN
 )
 [ "$res" == $'\110\19\9\477\x40\x7A\x7a\x9Z' ] || err $LINENO
-#MEMO 128-255 is not the same with Bash
 
 res=$($com <<- 'FIN'
 echo $'\u1234\uffFF' 
