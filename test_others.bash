@@ -157,6 +157,12 @@ res=$($com <<< 'a=A ; echo ${a:-B}' )
 res=$($com <<< 'set a ; b=${1-" "}; echo $b' )
 [ "$res" = "a" ] || err $LINENO
 
+res=$($com << 'EOF'
+echo "${dbg-'"'hey}"
+EOF
+)
+[ "$res" == "''hey" ] || err $LINENO
+
 # offset
 
 res=$($com <<< 'A=abc; echo ${A:1}' )
@@ -257,6 +263,24 @@ res=$($com <<< 'a="  " ; echo @${a/[[:space:]]/}@')
 
 res=$($com <<< 'a="  " ; echo @${a//[[:space:]]/}@')
 [ "$res" = "@@" ] || err $LINENO
+
+res=$($com <<< 'a=abc; echo ${a[0]//a/!}')
+[ "$res" == '!bc' ] || err $LINENO
+
+res=$($com << 'EOF'
+a=(abc def)
+eval a2=("${a[@]/#/\"-iname \'\"}")
+echo ${a2[0]}
+echo ${a2[1]}
+EOF
+)
+[ "$res" == "-iname 'abc
+-iname 'def" ] || err $LINENO
+
+# case conv.
+
+res=$($com <<< 'a=abc; echo ${a^?}')
+[ "$res" == 'Abc' ] || err $LINENO
 
 ### IRREGULAR INPUT TEST ###
 

@@ -19,12 +19,12 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 
-res=$($com <<< '
+res=$(bash <<< '
 declare -A array2["foo[bar]"]=bleh
 array2["foobar]"]=bleh
 array2["foo"]=bbb
 echo ${!array2[@]}')
-[ "$res" = "foo foo[bar] foobar]" ] || err $LINENO
+[ "$res" = "foobar] foo foo[bar]" ] || err $LINENO
 
 
 rm -f $tmp-*

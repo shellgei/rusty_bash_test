@@ -115,6 +115,9 @@ res=$($com <<< 'set 1 2 3 ; eval -- "a=(\"\$@\")"; echo ${a[0]}')
 res=$($com <<< 'a=aaa; eval b=\$a; echo $b')
 [ "$res" = "aaa" ] || err $LINENO
 
+res=$($com <<< 'echo $(eval echo b)')
+[ "$res" == 'b' ] || err $LINENO
+
 ### set ###
 
 res=$($com <<< "set -a ; _____A=3 ; env | grep _____A")
@@ -747,6 +750,9 @@ res=$($com <<< 'let a=1; echo $a')
 res=$($com <<< 'shopt -o -s posix')
 [ "$?" -eq "0" ] || err $LINENO
 
+res=$($com <<< 'let a=(5 + 3) b=(4 + 7); echo $a $b')
+[ "$res" == '8 11' ] || err $LINENO
+
 ### typeset ###
 
 res=$($com <<< 'f () { typeset IFS=: ; echo $1 ; } ; f a:b')
@@ -756,6 +762,7 @@ res=$($com <<< 'f () { typeset IFS=: ; echo $1 ; } ; f a:b')
 
 res=$($com <<< 'exec hohooh ; echo NG')
 [ "$res" == "" ] || err $LINENO
+
 
 echo $0 >> ./ok
 

@@ -279,10 +279,58 @@ res=$($com <<< 'IFS=": "; x=" a :  : b : "; set x $x; shift; echo "[$#]($1)($2)(
 res=$($com <<< 'IFS=": "; x=" a : b :  : "; set x $x; shift; echo "[$#]($1)($2)($3)"')
 [ "$res" = "[3](a)(b)()" ] || err $LINENO
 
+res=$($com <<< 'IFS=/; declare -a i; i[0]=f; i[1]= ; i[2]=b ; i[3]=; echo "${i[*]}"')
+[ "$res" == 'f//b/' ] || err $LINENO
+
+res=$($com <<< 'IFS=/; declare -a i; i[0]=f; i[1]= ; i[2]=b ; i[3]=; echo "${i[*]:0}"')
+[ "$res" == 'f//b/' ] || err $LINENO
+
+res=$($com << 'EOF'
+a=('a b' 'c d' 'e f')
+IFS=
+set ${a[@]:1:2}
+echo $2
+EOF
+)
+[ "$res" == "e f" ] || err $LINENO
+
+res=$($com << 'EOF'
+IFS=
+A=(bob 'tom dick harry' joe)
+set ${A[*]}
+echo $# 
+EOF
+)
+[ "$res" == '3' ] || err $LINENO
+
+res=$($com << 'EOF'
+a=('a b' 'c d' 'e f')
+IFS=
+set ${a[@]}
+echo $2
+EOF
+)
+[ "$res" == "c d" ] || err $LINENO
+
 ### position parameter ###
 
 res=$($com -c 'echo ${10}' {0..10})
 [ "$res" = '10' ] || err $LINENO
+
+cat << 'EOF' > $tmp-script
+echo $- | grep -q e ; echo $?
+echo $@
+EOF
+chmod +x $tmp-script
+
+res=$($com -e $tmp-script -a -b -c)
+[ "$res" == "0
+-a -b -c" ] || err $LINENO
+
+res=$($com -e $tmp-script -a -bc)
+[ "$res" == "0
+-a -bc" ] || err $LINENO
+
 
 ### others ###
 
