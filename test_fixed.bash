@@ -18,13 +18,36 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'a=(1 2 3) ; a[-1]=4; declare -p a')
+[ "$res" = 'declare -a a=([0]="1" [1]="2" [2]="4")' ] || err $LINENO
 
-res=$($com <<< '
-declare -A array2["foo[bar]"]=bleh
-array2["foobar]"]=bleh
-array2["foo"]=bbb
-echo ${!array2[@]}')
+res=$($com <<< 'a=(1 2 3) ; echo ${a[-1]}')
+[ "$res" = "3" ] || err $LINENO
+
+res=$($com << 'EOF'
+func1(){
+declare -g variable='function'
+declare -g -a array=(function)
+}
+
+declare -g variable='main'
+declare -g -a array=(main)
+func1
+echo  ${variable} ${array[@]}
+EOF
+)
+[ "$res" = "function function" ] || err $LINENO
+
+res=$($com <<< 'declare -A array2["foo[bar]"]=bleh; array2["foobar]"]=bleh; array2["foo"]=bbb; echo ${!array2[@]}')
 [ "$res" = "foo foo[bar] foobar]" ] || err $LINENO
+
+res=$($com << 'EOF'
+declare -A foo
+foo=( ['ab]']=bar )
+echo ${!foo[@]}
+EOF
+)
+[ "$res" = 'ab]' ] || err $LINENO
 
 
 rm -f $tmp-*
