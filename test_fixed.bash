@@ -18,12 +18,14 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-res=$($com <<< 'declare -ai -g foo=(1 2 xx 3); declare -p foo')
-[ "$res" = 'declare -a foo=([0]="1" [1]="2" [2]="0" [3]="3")' ] || err $LINENO
+res=$($com <<< 'declare -ai -g foo=(1 2 xx 3); echo "${foo[@]}"')
+[ "$res" = '1 2 0 3' ] || err $LINENO
+
+res=$($com <<< 'declare -i -a arr=(1+1 2+2 3+3); declare -p arr')
+[ "$res" = 'declare -ai arr=([0]="2" [1]="4" [2]="6")' ] || err $LINENO
 
 res=$($com <<< 'x[0]=1 ;x+=( [-1]=foo ); declare -p x')
 [ "$res" = 'declare -a x=([0]="foo")' ] || err $LINENO
-
 
 res=$($com <<< 'a=(1 2 3) ; unset a[-10]; declare -p a')
 [ "$res" = 'declare -a a=([0]="1" [1]="2" [2]="3")' ] || err $LINENO
