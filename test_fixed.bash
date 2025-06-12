@@ -18,6 +18,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'declare -i a="3+1"; declare +i a; a+=a ; echo $a')
+[ "$res" = '4a' ] || err $LINENO
+
 res=$($com <<< 'declare -ai -g foo=(1 2 xx 3); echo "${foo[@]}"')
 [ "$res" = '1 2 0 3' ] || err $LINENO
 
