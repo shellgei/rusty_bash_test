@@ -19,6 +19,20 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 res=$($com << 'FIN'
+declare -a a='(1 2 3)'
+echo ${a[0]}
+FIN
+)
+[ "$res" = '1' ] || err $LINENO
+
+res=$($com << 'FIN'
+declare a='(1 2 3)'
+echo ${a[0]}
+FIN
+)
+[ "$res" = '(1 2 3)' ] || err $LINENO
+
+res=$($com << 'FIN'
 b='[0]=bar'
 declare -a foo="$b"
 declare -p foo
