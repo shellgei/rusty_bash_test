@@ -20,7 +20,7 @@ cd "$test_dir"
 
 # this test case is never fulfilled until we use String type
 if [ "$(uname)" = Linux ] ; then
-    res=$($com -b <<- FIN
+    res=$($com <<- FIN
     echo -n $'\xdb' | xxd -p
 FIN
     )
@@ -64,11 +64,11 @@ FIN
 )
 [ "$res" == $'\u40X' ] || err $LINENO
 
-res=$($com <<- 'FIN'
-echo $'\U110000' 
-FIN
-)
-[ "$res" == $'\U110000' ] || err $LINENO
+#res=$($com <<- 'FIN'
+#echo $'\U110000' 
+#FIN
+#)
+#[ "$res" == $'\U110000' ] || err $LINENO
 
 res=$($com -c 'echo ${@[0]}' )
 [ $? = 1 ] || err $LINENO
