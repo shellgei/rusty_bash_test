@@ -19,6 +19,25 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 res=$($com << 'FIN'
+value="AbCdE"
+declare -a foo
+foo=( one two three )
+declare -l foo="$value"
+declare -p foo
+FIN
+)
+[ "$res" = 'declare -al foo=([0]="abcde" [1]="two" [2]="three")' ] || err $LINENO
+
+
+res=$($com << 'FIN'
+value='[$(echo total 0)]=1 [2]=2]'
+declare -a var="($value)"
+declare -p var
+FIN
+)
+[ "$res" = 'declare -a var=()' ] || err $LINENO
+
+res=$($com << 'FIN'
 declare -a a='(1 2 3)'
 echo ${a[0]}
 FIN
