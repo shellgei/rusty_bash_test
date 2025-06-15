@@ -19,6 +19,25 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 res=$($com << 'FIN'
+a='a b'
+declare -A d='($a)'
+declare -p d
+FIN
+)
+[ "$res" = 'declare -A d=(["a b"]="" )' ] || err $LINENO
+
+res=$($com <<< 'declare -A a=(1 2 3 4); declare -p a')
+[ "$res" = 'declare -A a=([1]="2" [3]="4" )' ] || err $LINENO
+
+res=$($com << 'FIN'
+x='a b'
+declare -A a=$x
+declare -p a
+FIN
+)
+[ "$res" = 'declare -A a=([0]="a b" )' ] || err $LINENO
+
+res=$($com << 'FIN'
 value="AbCdE"
 declare -a foo
 foo=( one two three )
