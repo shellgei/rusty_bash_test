@@ -18,6 +18,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'A=#a ; echo $A')
+[ "$res" = '#a' ] || err $LINENO
+
 res=$($com << 'FIN'
 SQUOTE="'"
 val1=$(set | sed -n 's:^SQUOTE=::p')
