@@ -617,19 +617,22 @@ if [ "$(whoami)" != root ] ; then
 	[ "$?" = "1" ] || err $LINENO
 fi
 
-res=$($com -c '
-touch /tmp/$$-N
-[[ -N /tmp/$$-N ]] ; echo $?
-echo a >> /tmp/$$-N
-[[ -N /tmp/$$-N ]] ; echo $?
-[[ -N /tmp/$$-N ]] ; echo $?
-cat /tmp/$$-N > /dev/null
-[[ -N /tmp/$$-N ]] ; echo $?
-rm /tmp/$$-N')
-[ "$res" = "1
-0
-0
-1" ] || err $LINENO
+# not passed even by Bash #
+#res=$(bash -c '
+#rm -f /tmp/$$-N
+#touch /tmp/$$-N
+#[[ -N /tmp/$$-N ]] ; echo $?
+#/bin/echo a >> /tmp/$$-N
+#[[ -N /tmp/$$-N ]] ; echo $?
+#[[ -N /tmp/$$-N ]] ; echo $?
+#cat /tmp/$$-N > /dev/null
+#[[ -N /tmp/$$-N ]] ; echo $?
+#rm /tmp/$$-N
+#')
+#[ "$res" = "1
+#0
+#0
+#1" ] || err $LINENO
 
 res=$($com -c '[[ (-a /etc/passwd) ]]')
 [ "$?" = "0" ] || err $LINENO
