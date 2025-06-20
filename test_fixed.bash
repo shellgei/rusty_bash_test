@@ -21,6 +21,12 @@ cd "$test_dir"
 res=$($com <<< 'a[ ]=0; echo ${a[0]}')
 [ "$res" = '0' ] || err $LINENO
 
+res=$($com << 'FIN'
+echo $'ab\x{41}cd' | xxd -ps
+FIN
+)
+[ "$res" = '61624163640a' ] || err $LINENO
+
 res=$($com <<< 'A=#a ; echo $A')
 [ "$res" = '#a' ] || err $LINENO
 
