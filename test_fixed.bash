@@ -18,6 +18,81 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'set -- aa bb; IFS=+;f () { echo 1:$1 2:$2 ; }; f ${*#?}')
+[ "$res" = '1:a 2:b' ] || err $LINENO
+
+res=$($com <<< 'a=(aa bb); IFS=; echo ${a[*]/a/x}')
+[ "$res" = 'xa bb' ] || err $LINENO
+
+res=$($com << 'FIN'
+IFS=+
+f () { echo 1:$1 2:$2 3:$3 4:$4 ; }
+set -- aa bb
+f $* ${*:1}
+FIN
+)
+[ "$res" = '1:aa 2:bb 3:aa 4:bb' ] || err $LINENO
+
+
+res=$($com << 'FIN'
+declare -A A; for k in "]" "*" "@"; do declare "A[$k]=X"; done ;declare -p A
+FIN
+)
+[ "$res" = 'declare -A A=(["*"]="X" ["@"]="X" )' ] || err $LINENO
+
+res=$($com << 'FIN'
+declare -A A; declare "A['a']=X" ;declare -p A
+FIN
+)
+[ "$res" = 'declare -A A=([a]="X" )' ] || err $LINENO
+
+res=$($com << 'FIN'
+declare -A A; for k in "]" "*" "@"; do declare A[$k]=X; done ;declare -p A
+FIN
+)
+[ "$res" = 'declare -A A=(["*"]="X" ["@"]="X" )' ] || err $LINENO
+
+
+res=$($com << 'FIN'
+declare -A A
+k='*'
+A[$k]=2
+declare -p A
+FIN
+)
+[ "$res" = 'declare -A A=(["*"]="2" )' ] || err $LINENO
+
+res=$($com << 'FIN'
+declare -A A
+shopt -s assoc_expand_once
+k=$'\t'
+A[$k]=2
+declare -p A
+FIN
+)
+[ "$res" = "declare -A A=([$'\t']=\"2\" )" ] || err $LINENO
+
+res=$($com << 'FIN'
+var=( $'\x01\x01\x01\x01' )
+declare -p var
+FIN
+)
+[ "$res" = "declare -a var=([0]=$'\001\001\001\001')" ] || err $LINENO
+
+res=$($com << 'FIN'
+value='[$(echo total 0)]=1 [2]=2]'
+declare -a var="($value)"
+declare -p var
+FIN
+)
+[ "$res" = 'declare -a var=()' ] || err $LINENO
+
+res=$($com <<< 'declare -r c[100] ; declare -p c')
+[ "$res" = 'declare -ar c' ] || err $LINENO
+
+res=$($com <<< 'declare -a b[256]; declare -p b')
+[ "$res" = 'declare -a b' ] || err $LINENO
+
 res=$($com <<< 'echo ${a[2]=3}; echo ${a[2]}')
 [ "$res" = '3
 3' ] || err $LINENO
@@ -89,14 +164,6 @@ FIN
 )
 [ "$res" = 'declare -al foo=([0]="abcde" [1]="two" [2]="three")' ] || err $LINENO
 
-
-res=$($com << 'FIN'
-value='[$(echo total 0)]=1 [2]=2]'
-declare -a var="($value)"
-declare -p var
-FIN
-)
-[ "$res" = 'declare -a var=()' ] || err $LINENO
 
 res=$($com << 'FIN'
 declare -a a='(1 2 3)'
