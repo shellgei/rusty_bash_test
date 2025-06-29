@@ -18,6 +18,12 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'shopt -s assoc_expand_once; typeset -A a; a[0]=0 a[1]=1; let "a[\" \"]=11" ; typeset -p a')
+[ "$res" = 'declare -A a=(["\" \""]="11" [0]="0" [1]="1" )' ] || err $LINENO
+
+res=$($com <<< 'typeset -A a; a[0]=0 a[1]=1; let "a[\" \"]=11" ; typeset -p a')
+[ "$res" = 'declare -A a=([" "]="11" [0]="0" [1]="1" )' ] || err $LINENO
+
 res=$($com <<< 'declare -A a ;  a["\" \""]=11 ; declare -p a')
 [ "$res" = 'declare -A a=(["\" \""]="11" )' ] || err $LINENO
 
