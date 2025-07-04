@@ -18,6 +18,28 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'FIN'
+b='[0]=bar'
+declare -a foo="$b"
+declare -p foo
+FIN
+)
+[ "$res" = 'declare -a foo=([0]="[0]=bar")' ] || err $LINENO
+
+res=$($com << 'FIN'
+b='[0]=bar'; declare -a foo=("$b"); declare -p foo
+FIN
+)
+[ "$res" = 'declare -a foo=([0]="[0]=bar")' ] || err $LINENO
+
+res=$($com << 'FIN'
+declare -a foo
+declare foo[1]='(4 5 6)'
+declare -p foo
+FIN
+)
+[ "$res" = 'declare -a foo=([1]="(4 5 6)")' ] || err $LINENO
+
 res=$($com <<< 'shopt -s assoc_expand_once; typeset -A a; a[0]=0 a[1]=1; let "a[\" \"]=11" ; typeset -p a')
 [ "$res" = 'declare -A a=(["\" \""]="11" [0]="0" [1]="1" )' ] || err $LINENO
 
@@ -187,14 +209,6 @@ echo ${a[0]}
 FIN
 )
 [ "$res" = '(1 2 3)' ] || err $LINENO
-
-res=$($com << 'FIN'
-b='[0]=bar'
-declare -a foo="$b"
-declare -p foo
-FIN
-)
-[ "$res" = 'declare -a foo=([0]="[0]=bar")' ] || err $LINENO
 
 
 res=$($com <<< 'a[1]=a ; [[ -v a ]] || echo ok')
