@@ -18,8 +18,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-#res=$($com <<< 'set -xv ; f () { a=(b); local "${a[@]}" ; } ; f')
-#[ $? -eq 0 ] || err $LINENO
+res=$($com <<< 'set -xv ; f () { a=(b); local "${a[@]}" ; echo $a ; } ; f')
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = 'b' ] || err $LINENO
 
 res=$($com <<< 'declare -f "$1" >/dev/null')
 [ $? -eq 1 ] || err $LINENO
