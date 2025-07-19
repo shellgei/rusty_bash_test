@@ -18,13 +18,15 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-res=$(diff <($com <<< 'ulimit -a') <(bash <<< 'ulimit -a'))
-[ $? -eq 0 ] || err $LINENO
-[ "$res" = '' ] || err $LINENO
-
-res=$(diff <($com <<< 'ulimit -Ha') <(bash <<< 'ulimit -Ha'))
-[ $? -eq 0 ] || err $LINENO
-[ "$res" = '' ] || err $LINENO
+if [ "$(uname)" = Linux ] ; then
+    res=$(diff <($com <<< 'ulimit -a') <(bash <<< 'ulimit -a'))
+    [ $? -eq 0 ] || err $LINENO
+    [ "$res" = '' ] || err $LINENO
+    
+    res=$(diff <($com <<< 'ulimit -Ha') <(bash <<< 'ulimit -Ha'))
+    [ $? -eq 0 ] || err $LINENO
+    [ "$res" = '' ] || err $LINENO
+fi
 
 res=$($com <<< 'set -xv ; f () { a=(b); local "${a[@]}" ; echo $a ; } ; f')
 [ $? -eq 0 ] || err $LINENO
