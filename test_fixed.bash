@@ -22,6 +22,10 @@ res=$(diff <($com <<< 'ulimit -a') <(bash <<< 'ulimit -a'))
 [ $? -eq 0 ] || err $LINENO
 [ "$res" = '' ] || err $LINENO
 
+res=$(diff <($com <<< 'ulimit -Ha') <(bash <<< 'ulimit -Ha'))
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = '' ] || err $LINENO
+
 res=$($com <<< 'set -xv ; f () { a=(b); local "${a[@]}" ; echo $a ; } ; f')
 [ $? -eq 0 ] || err $LINENO
 [ "$res" = 'b' ] || err $LINENO
