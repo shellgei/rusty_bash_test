@@ -18,6 +18,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'a=abc ; echo "${a@k}"')
+[ "$res" = "'abc'" ] || err $LINENO
+
 res=$(diff <($com <<< 'ulimit -a') <(bash <<< 'ulimit -a'))
 [ $? -eq 0 ] || err $LINENO
 [ "$res" = '' ] || err $LINENO
