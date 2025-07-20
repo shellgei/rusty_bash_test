@@ -21,6 +21,18 @@ cd "$test_dir"
 res=$($com <<< 'a=abc ; echo "${a@k}"')
 [ "$res" = "'abc'" ] || err $LINENO
 
+res=$($com <<< 'set a b ; echo "${@@k}"')
+[ "$res" = "'a' 'b'" ] || err $LINENO
+
+res=$($com <<< 'A=(a b) ; echo "${A[@]@k}"')
+[ "$res" = "0 a 1 b" ] || err $LINENO
+
+res=$($com <<< 'A=(a b) ; echo "${A[@]@K}"')
+[ "$res" = '0 "a" 1 "b"' ] || err $LINENO
+
+res=$($com <<< 'A=(a b) ; echo "${A[@]@Q}"')
+[ "$res" = "'a' 'b'" ] || err $LINENO
+
 if [ "$(uname)" = Linux ] ; then
     res=$(diff <($com <<< 'ulimit -a') <(bash <<< 'ulimit -a'))
     [ $? -eq 0 ] || err $LINENO
