@@ -18,6 +18,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< "declare -A assoc=( [one]=one ) ; assoc+=( [one]+=more ); declare -p assoc")
+[ "$res" = 'declare -A assoc=([one]="onemore" )' ] || err $LINENO
+
 res=$($com <<< "declare -A a; a[hoe hoe]=b ; declare -p a")
 [ "$res" = 'declare -A a=(["hoe hoe"]="b" )' ] || err $LINENO
 
