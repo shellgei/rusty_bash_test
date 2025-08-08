@@ -18,6 +18,10 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< "echo 123 | tee >(rev)")
+[ "$res" = '123
+321' ] || err $LINENO
+
 res=$($com <<< "declare -a e[10]=(test); declare -p e")
 [ "$res" = '' ] || err $LINENO
 
