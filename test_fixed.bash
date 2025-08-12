@@ -22,6 +22,11 @@ res=$($com <<< "echo 123 | tee >(rev)")
 [ "$res" = '123
 321' ] || err $LINENO
 
+### TODO: not fixed ###
+#res=$($com <<< "echo 123 | tee >(rev) | rev --")
+#[ "$res" = '321
+#123' ] || err $LINENO
+
 res=$($com << 'EOF'
 rkey=']'
 declare -A A
