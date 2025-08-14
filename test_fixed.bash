@@ -18,6 +18,15 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com -c 'echo F=~')
+[ "$res" != 'F=~' ] || err $LINENO
+
+res=$($com -c 'echo ${A:-\a}')
+[ "$res" == 'a' ] || err $LINENO
+
+res=$($com -c 'echo "${A:-\a}"')
+[ "$res" == '\a' ] || err $LINENO
+
 res=$($com -c 'echo ${A:-~}')
 [ "$res" != '~' ] || err $LINENO
 
