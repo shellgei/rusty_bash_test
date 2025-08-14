@@ -18,6 +18,29 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com -c '
+cat << !
+~
+!
+')
+echo "$res" | grep '~' || err $LINENO
+
+res=$($com -c '
+cat << !
+~/bin
+!
+')
+echo "$res" | grep '~/bin' || err $LINENO
+
+res=$($com -c ': ${A:=~}; echo $A')
+echo "$res" | grep '^/' || err $LINENO
+
+res=$($com -c ': ${A:=~:aa}; echo $A')
+echo "$res" | grep '^/' || err $LINENO
+
+res=$($com -c ': ${A:=~/bin:~/bin2}; echo $A')
+echo "$res" | grep '^/.*~' || err $LINENO
+
 res=$($com -c ': ${A:=B=~/bin:~/bin2}; echo $A')
 [ "$res" = 'B=~/bin:~/bin2' ] || err $LINENO
 
