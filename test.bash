@@ -42,6 +42,7 @@ cd "$test_dir"
 ./test_param_substitutions.bash nobuild "$repo_dir" &
 ./test_array.bash nobuild "$repo_dir" &
 ./test_fixed_v1.2.0.bash nobuild "$repo_dir" &
+./test_fixed_v1.2.1.bash nobuild "$repo_dir" &
 
 wait 
 
