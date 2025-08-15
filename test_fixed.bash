@@ -18,6 +18,9 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'f() { echo "-${*-x}-" ; } ; f ""')
+[ "$res" == '--' ] || err $LINENO
+
 res=$($com -c 'echo F=~')
 [ "$res" != 'F=~' ] || err $LINENO
 
