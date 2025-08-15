@@ -232,9 +232,10 @@ res=$($com <<< 'while true ; do while true ; do break 10 ; done ; echo NG ; done
 
 # continue command
 
-res=$($com <<< 'seq 2 | while read d ; do echo x; continue; echo NG ; done')
+res=$($com <<< 'seq 2 | while read d ; do echo x; continue; echo NG ; done; echo end')
 [ "$res" == "x
-x" ] || err $LINENO
+x
+end" ] || err $LINENO
 
 res=$($com <<< 'seq 2 | while read d ; do for a in a b ; do echo x; continue 2 ; done ; echo NG ; done')
 [ "$res" == "x

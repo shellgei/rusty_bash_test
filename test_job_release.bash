@@ -11,10 +11,10 @@ err () {
 
 repo_dir=${2:-~/GIT/rusty_bash}
 test_dir="$PWD"
-com="$repo_dir/target/debug/sush"
+com="$repo_dir/target/debug/release"
 cd "$repo_dir"
 
-[ "$1" == "nobuild" ] || cargo build || err $LINENO
+[ "$1" == "nobuild" ] || cargo build --release || err $LINENO
 cd "$test_dir"
 
 ### JOB TEST ###
