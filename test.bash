@@ -25,13 +25,13 @@ cd "$test_dir"
 : > error
 : > ok
 
+./test_job.bash nobuild "$repo_dir" &
 ./test_case.bash nobuild "$repo_dir" &
 ./test_substitution.bash nobuild "$repo_dir" &
 ./test_others.bash nobuild "$repo_dir" &
 ./test_redirects.bash nobuild "$repo_dir" &
 ./test_calculation.bash nobuild "$repo_dir" &
 ./test_compound.bash nobuild "$repo_dir" &
-./test_job.bash nobuild "$repo_dir" &
 ./test_brace.bash nobuild "$repo_dir" &
 ./test_builtins.bash nobuild "$repo_dir" &
 ./test_options.bash nobuild "$repo_dir" &

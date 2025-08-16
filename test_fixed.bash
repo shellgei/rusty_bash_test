@@ -45,6 +45,12 @@ EOF
 )
 [ "$res" == '0x7f' ] || err $LINENO
 
+res=$($com <<< 'for i in a b c; do echo $i; continue; echo bad-$i ; done; echo end-1')
+[ "$res" == 'a
+b
+c
+end-1' ] || err $LINENO
+
 res=$($com <<< 'f() { echo "-${*-x}-" ; } ; f ""')
 [ "$res" == '--' ] || err $LINENO
 
