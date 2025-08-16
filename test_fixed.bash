@@ -18,6 +18,33 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'set "" ""; f() { echo $# ; } ; f "$@"')
+[ "$res" == '2' ] || err $LINENO
+
+res=$($com <<< 'set "" ; f() { echo $# ; } ; f "$@"')
+[ "$res" == '1' ] || err $LINENO
+
+res=$($com <<< 'set "" ; f() { echo $# ; } ; f "${@}"')
+[ "$res" == '1' ] || err $LINENO
+
+res=$($com -c 'printf "%#x\n" 12')
+[ "$res" == '0xc' ] || err $LINENO
+
+res=$($com << 'EOF'
+printf "%#x\n" "'1"
+printf "%#x\n" "'あ"
+EOF
+)
+[ "$res" == '0x31
+0x3042' ] || err $LINENO
+
+res=$($com << "EOF"
+tmp=$'\x7f'
+printf "%#1x\n" "'$tmp"
+EOF
+)
+[ "$res" == '0x7f' ] || err $LINENO
+
 res=$($com <<< 'f() { echo "-${*-x}-" ; } ; f ""')
 [ "$res" == '--' ] || err $LINENO
 
