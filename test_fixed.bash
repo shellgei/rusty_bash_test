@@ -18,6 +18,39 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< 'set x - ; echo $2')
+[ "$res" == '-' ] || err $LINENO
+
+res=$($com <<< 'str="-"; set x $str ; echo $2')
+[ "$res" == '-' ] || err $LINENO
+
+res=$($com << 'EOF'
+c=(outside)
+f() { readonly c=(3) ; }
+f
+declare -p c
+EOF
+)
+[ "$res" == 'declare -ar c=([0]="3")' ] || err $LINENO
+
+res=$($com << 'EOF'
+c=(outside)
+f() { readonly 'c=(3)' ; }
+f
+declare -p c
+EOF
+)
+[ "$res" == 'declare -ar c=([0]="(3)")' ] || err $LINENO
+
+res=$($com << 'EOF'
+r=(1)
+f() { export r='(5)' ; }
+f
+declare -p r
+EOF
+)
+[ "$res" == 'declare -ax r=([0]="(5)")' ] || err $LINENO
+
 res=$($com <<< 'set "" ""; f() { echo $# ; } ; f "$@"')
 [ "$res" == '2' ] || err $LINENO
 
