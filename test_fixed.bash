@@ -18,6 +18,26 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'EOF' | tr -dc a-z\\n
+a=$'ab\001cd\001ef'
+IFS=$'\001'
+b=$'uv\177wx\177yz'
+for w in ab${b}y${a}z ; do echo $w ; done
+EOF
+)
+[ "$res" == 'abuvwxyzyab
+cd
+efz' ] || err $LINENO
+
+res=$($com <<< 'x=" a" ; set $x ; echo @$1@')
+[ "$res" == '@a@' ] || err $LINENO
+
+res=$($com <<< 'IFS=": "; x=" a" ; set $x ; echo @$1@')
+[ "$res" == '@a@' ] || err $LINENO
+
+res=$($com <<< 'IFS=": "; x=" a" ;echo @$x@')
+[ "$res" == '@ a@' ] || err $LINENO
+
 res=$($com <<< 'set x - ; echo $2')
 [ "$res" == '-' ] || err $LINENO
 
