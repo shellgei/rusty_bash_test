@@ -31,7 +31,7 @@ res=$($com <<< 'declare -f "" >/dev/null')
 res=$($com <<< 'a () { echo a ; } ; declare -f a | tr -d " "')
 [ "$res" = 'a()
 {
-echoa;
+echoa
 }' ] || err $LINENO
 
 res=$($com <<< 'declare -f "a" >/dev/null')
