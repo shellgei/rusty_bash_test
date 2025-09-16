@@ -20,6 +20,22 @@ cd "$test_dir"
 
 res=$($com <<< 'A=$(cat << EOF
 aaa
+EOF)
+echo $A
+')
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = 'aaa' ] || err $LINENO
+
+res=$($com <<< 'A=`cat << EOF
+aaa
+EOF`
+echo $A
+')
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = 'aaa' ] || err $LINENO
+
+res=$($com <<< 'A=$(cat << EOF
+aaa
 EOF )
 echo $A
 ')
