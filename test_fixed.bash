@@ -18,6 +18,13 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'EOF'
+f () { local 'c=$(date +%N)' ; echo $c ; }
+f | grep date
+EOF
+)
+[ $? -eq 0 ] || err $LINENO
+
 res=$($com <<< 'A=$(cat << EOF
 aaa
 EOF)
