@@ -34,6 +34,29 @@ echo $foo'
 [ $? -eq 0 ] || err $LINENO
 [ "$res" = 'hi' ] || err $LINENO
 
+res=$($com << 'EOF'
+f () { local 'c=$(date +%N)' ; echo $c ; }
+f | grep date
+EOF
+)
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'A=$(cat << EOF
+aaa
+EOF)
+echo $A
+')
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = 'aaa' ] || err $LINENO
+
+res=$($com <<< 'A=`cat << EOF
+aaa
+EOF`
+echo $A
+')
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = 'aaa' ] || err $LINENO
+
 res=$($com <<< 'A=$(cat << EOF
 aaa
 EOF )
