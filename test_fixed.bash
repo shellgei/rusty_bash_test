@@ -18,6 +18,66 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com << 'EOF'
+f(){ local a=bbb ; g ; declare -p a ;echo $? ; echo $a;  }
+g(){ unset a ; }
+
+f
+shopt -s localvar_unset
+f
+EOF
+)
+[ "$res" = '1
+
+declare -- a
+0' ] || err $LINENO
+
+
+res=$($com << 'EOF'
+a=(aaa bbb)
+f(){ local a; echo ${a[@]} ; }
+
+f
+shopt -s localvar_inherit
+f
+EOF
+)
+[ "$res" = '
+aaa bbb' ] || err $LINENO
+
+res=$($com << 'EOF'
+a=bbb
+f(){ local a; echo $a ; }
+
+f
+shopt -s localvar_inherit
+f
+EOF
+)
+[ "$res" = '
+bbb' ] || err $LINENO
+
+
+res=$($com << 'EOF'
+f1(){ local a=aaa ; f2 ; }
+f2(){ echo $a ; }
+
+f1
+EOF
+)
+[ "$res" = 'aaa' ] || err $LINENO
+
+res=$($com << 'EOF'
+f1(){ local a=aaa ; f2 ; }
+f2(){ local a; echo $a ; }
+
+shopt -s localvar_inherit
+f1
+EOF
+)
+[ "$res" = 'aaa' ] || err $LINENO
+
+
 res=$($com <<<  'foo=$(cat <<EOF
 hi
 EOF)
