@@ -46,6 +46,22 @@ echo ${!foo}
 unset
 bar' ] || err $LINENO
 
+res=$($com <<< 'declare -n a=b ; declare -p a')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'declare -n a=b ; unset a ; declare -p a')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'declare -n a=b ; unset -n a ; declare -p a')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'echo ${!aaa}')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'echo ${!aaa-unset}')
+[ $? -eq 1 ] || err $LINENO
+[ "$res" != 'unset' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
