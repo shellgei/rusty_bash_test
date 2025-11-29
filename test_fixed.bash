@@ -62,6 +62,9 @@ res=$($com <<< 'echo ${!aaa-unset}')
 [ $? -eq 1 ] || err $LINENO
 [ "$res" != 'unset' ] || err $LINENO
 
+res=$($com <<< 'b=x; readonly b; declare -n a=b ; unset a')
+[ $? -eq 1 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
