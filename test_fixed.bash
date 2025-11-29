@@ -34,6 +34,18 @@ bar' ] || err $LINENO
 res=$($com <<< 'declare -n a=b ; declare -r a ; b=3')
 [ $? -eq 1 ] || err $LINENO
 
+res=$($com <<< '
+bar=one
+typeset -n foo=bar
+unset foo
+echo ${bar-unset}
+echo ${foo-unset}
+echo ${!foo}
+')
+[ "$res" = 'unset
+unset
+bar' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
