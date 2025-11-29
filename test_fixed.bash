@@ -31,6 +31,9 @@ echo ${!foo}
 [ "$res" = 'one
 bar' ] || err $LINENO
 
+res=$($com <<< 'declare -n a=b ; declare -r a ; b=3')
+[ $? -eq 1 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
