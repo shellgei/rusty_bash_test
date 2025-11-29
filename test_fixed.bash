@@ -65,6 +65,12 @@ res=$($com <<< 'echo ${!aaa-unset}')
 res=$($com <<< 'b=x; readonly b; declare -n a=b ; unset a')
 [ $? -eq 1 ] || err $LINENO
 
+res=$($com <<< 'qux=three; typeset -n ref=; ref=qux; echo $ref')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'qux=three; typeset -n ref; ref=qux; echo $ref')
+[ "$res" = 'three' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
