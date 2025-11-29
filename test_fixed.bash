@@ -18,9 +18,18 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-#res=$($com <<< 'declare -A v=( a b ); declare -p v; echo "${v[@]@k}"')
-#[ "$res" = 'declare -A v=([a]="b" )
-#a b' ] || err $LINENO
+res=$($com <<< 'declare -n a=b; a=3; echo $b')
+[ "$res" = '3' ] || err $LINENO
+
+res=$($com <<< '
+bar=one
+foo=bar
+typeset -n foo
+echo ${foo}
+echo ${!foo}
+')
+[ "$res" = 'one
+bar' ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
