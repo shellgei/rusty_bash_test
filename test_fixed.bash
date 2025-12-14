@@ -71,6 +71,12 @@ res=$($com <<< 'qux=three; typeset -n ref=; ref=qux; echo $ref')
 res=$($com <<< 'qux=three; typeset -n ref; ref=qux; echo $ref')
 [ "$res" = 'three' ] || err $LINENO
 
+res=$($com <<< 'declare -ai a; a=(); echo ${a[42]=4+3}')
+[ "$res" = '7' ] || err $LINENO
+
+res=$($com <<< 'A=(a); echo ${A[@]@k}')
+[ "$res" = '0 a' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
