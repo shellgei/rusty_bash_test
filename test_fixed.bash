@@ -77,6 +77,9 @@ res=$($com <<< 'declare -ai a; a=(); echo ${a[42]=4+3}')
 res=$($com <<< 'A=(a); echo ${A[@]@k}')
 [ "$res" = '0 a' ] || err $LINENO
 
+res=$($com <<< 'A=(1 2 3); declare "A=(1 2 3)" ; echo ${A[@]}')
+[ "$res" = '1 2 3' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
