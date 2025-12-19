@@ -87,6 +87,9 @@ res=$($com <<< 'arr=(a b c); IFS=+; a=${arr[@]} ; echo "$a"; b=${arr[@]/a/x}; ec
 [ "$res" = 'a b c
 x b c' ] || err $LINENO
 
+res=$($com <<< 'A=( a b c d ) ; N=${#A[@]} ; unset A[N-1] ; echo ${A[@]}')
+[ "$res" = 'a b c' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
