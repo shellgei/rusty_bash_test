@@ -83,6 +83,10 @@ res=$($com <<< 'A=(1 2 3); declare "A=(1 2 3)" ; echo ${A[@]}')
 res=$($com <<< 'set - a b c; echo $1 $3')
 [ "$res" = 'a c' ] || err $LINENO
 
+res=$($com <<< 'arr=(a b c); IFS=+; a=${arr[@]} ; echo "$a"; b=${arr[@]/a/x}; echo "$b"')
+[ "$res" = 'a b c
+x b c' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
