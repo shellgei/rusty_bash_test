@@ -80,6 +80,9 @@ res=$($com <<< 'A=(a); echo ${A[@]@k}')
 res=$($com <<< 'A=(1 2 3); declare "A=(1 2 3)" ; echo ${A[@]}')
 [ "$res" = '1 2 3' ] || err $LINENO
 
+res=$($com <<< 'set - a b c; echo $1 $3')
+[ "$res" = 'a c' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
