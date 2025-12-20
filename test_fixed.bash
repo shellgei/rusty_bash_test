@@ -90,6 +90,15 @@ x b c' ] || err $LINENO
 res=$($com <<< 'A=( a b c d ) ; N=${#A[@]} ; unset A[N-1] ; echo ${A[@]}')
 [ "$res" = 'a b c' ] || err $LINENO
 
+res=$($com <<< 'declare -r c
+declare -p c')
+[ "$res" = 'declare -r c' ] || err $LINENO
+
+res=$($com <<< 'declare -r c[100]
+c[-2]=4
+declare -p c')
+[ "$res" = 'declare -ar c' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
