@@ -99,6 +99,10 @@ c[-2]=4
 declare -p c')
 [ "$res" = 'declare -ar c' ] || err $LINENO
 
+res=$($com <<< 'declare -n b='a[0]' ; a=(1 2 3) ; b=x ; declare -p a')
+[ "$res" = 'declare -a a=([0]="x" [1]="2" [2]="3")' ] || err $LINENO
+
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
