@@ -102,6 +102,17 @@ declare -p c')
 res=$($com <<< 'declare -n b='a[0]' ; a=(1 2 3) ; b=x ; declare -p a')
 [ "$res" = 'declare -a a=([0]="x" [1]="2" [2]="3")' ] || err $LINENO
 
+res=$($com <<< 'command declare a=b; echo $a')
+[ "$res" = 'b' ] || err $LINENO
+
+res=$($com <<< 'typeset -n ref ; echo ${ref-unset}')
+[ "$res" = 'unset' ] || err $LINENO
+
+res=$($com <<< 'typeset -n a='b[1]' ; b=(a B c) ; echo ${a}')
+[ "$res" = 'B' ] || err $LINENO
+
+res=$($com <<< 'typeset -n a='b[1]' ; b=(a B c) ; echo $a')
+[ "$res" = 'B' ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
