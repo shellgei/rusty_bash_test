@@ -71,6 +71,45 @@ res=$($com <<< 'qux=three; typeset -n ref=; ref=qux; echo $ref')
 res=$($com <<< 'qux=three; typeset -n ref; ref=qux; echo $ref')
 [ "$res" = 'three' ] || err $LINENO
 
+res=$($com <<< 'declare -ai a
+a[0]=4
+declare -n b='a[0]'
+b+=1
+declare -p b')
+[ "$res" = 'declare -n b="a[0]"' ] || err $LINENO
+
+res=$($com <<< 'declare -ai a
+a[0]=4
+declare -n b='a[0]'
+b+=1
+declare -p a')
+[ "$res" = 'declare -ai a=([0]="5")' ] || err $LINENO
+
+echo 'a() { echo ${FUNCNAME[0]} ; echo ${FUNCNAME[1]} ; }; a' > $tmp-script
+res=$($com $tmp-script)
+[ "$res" = 'a
+main' ] || err $LINENO
+
+echo 'a() { echo ${FUNCNAME[@]} ; }; a' > $tmp-script
+res=$($com $tmp-script)
+[ "$res" = 'a main' ] || err $LINENO
+
+res=$($com <<< 'f () { caller ; }
+f')
+[ "$res" = '2 NULL' ] || err $LINENO
+
+res=$($com <<< 'f () { echo ${BASH_LINENO[@]} ; echo ${FUNCNAME[@]}; }
+g () { f ; }
+g')
+[ "$res" = '2 3
+f g' ] || err $LINENO
+
+res=$($com <<< 'f () { caller ; }
+g () { caller; f ; }
+g')
+[ "$res" = '3 NULL
+2 main' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
