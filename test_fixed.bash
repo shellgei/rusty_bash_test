@@ -110,6 +110,49 @@ g')
 [ "$res" = '3 NULL
 2 main' ] || err $LINENO
 
+res=$($com <<< 'declare -ai a; a=(); echo ${a[42]=4+3}')
+[ "$res" = '7' ] || err $LINENO
+
+res=$($com <<< 'A=(a); echo ${A[@]@k}')
+[ "$res" = '0 a' ] || err $LINENO
+
+res=$($com <<< 'A=(1 2 3); declare "A=(1 2 3)" ; echo ${A[@]}')
+[ "$res" = '1 2 3' ] || err $LINENO
+
+res=$($com <<< 'set - a b c; echo $1 $3')
+[ "$res" = 'a c' ] || err $LINENO
+
+res=$($com <<< 'arr=(a b c); IFS=+; a=${arr[@]} ; echo "$a"; b=${arr[@]/a/x}; echo "$b"')
+[ "$res" = 'a b c
+x b c' ] || err $LINENO
+
+res=$($com <<< 'A=( a b c d ) ; N=${#A[@]} ; unset A[N-1] ; echo ${A[@]}')
+[ "$res" = 'a b c' ] || err $LINENO
+
+res=$($com <<< 'declare -r c
+declare -p c')
+[ "$res" = 'declare -r c' ] || err $LINENO
+
+res=$($com <<< 'declare -r c[100]
+c[-2]=4
+declare -p c')
+[ "$res" = 'declare -ar c' ] || err $LINENO
+
+res=$($com <<< 'declare -n b='a[0]' ; a=(1 2 3) ; b=x ; declare -p a')
+[ "$res" = 'declare -a a=([0]="x" [1]="2" [2]="3")' ] || err $LINENO
+
+res=$($com <<< 'command declare a=b; echo $a')
+[ "$res" = 'b' ] || err $LINENO
+
+res=$($com <<< 'typeset -n ref ; echo ${ref-unset}')
+[ "$res" = 'unset' ] || err $LINENO
+
+res=$($com <<< 'typeset -n a='b[1]' ; b=(a B c) ; echo ${a}')
+[ "$res" = 'B' ] || err $LINENO
+
+res=$($com <<< 'typeset -n a='b[1]' ; b=(a B c) ; echo $a')
+[ "$res" = 'B' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
