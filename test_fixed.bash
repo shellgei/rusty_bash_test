@@ -159,6 +159,16 @@ g () { f ; }
 g')
 [ "$res" = '2 g main' ] || err $LINENO
 
+
+res=$($com <<< '
+coproc a { echo a b c ; }
+sleep 0.1
+coproc b { echo a b c ; sleep 0.4; }
+sleep 0.1
+echo ${b[@]}
+')
+[ "$res" = '63 60' ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
