@@ -36,6 +36,13 @@ res=$($com <<< 'a=b ; echo ${#a[@]}')
 res=$($com <<< 'declare a ; echo ${#a[@]}')
 [ "$res" = "0" ] || err $LINENO
 
+res=$($com -c 'shopt -q progcomp')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'shopt -u progcomp ; shopt -q progcomp')
+[ $? -eq 1 ] || err $LINENO
+
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
