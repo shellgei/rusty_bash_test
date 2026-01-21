@@ -42,6 +42,18 @@ res=$($com -c 'shopt -q progcomp')
 res=$($com <<< 'shopt -u progcomp ; shopt -q progcomp')
 [ $? -eq 1 ] || err $LINENO
 
+res=$($com << 'EOF'
+echo "${foo-'}'}"
+EOF
+)
+[ "$res" = "'}'" ] || err $LINENO
+
+res=$($com << 'EOF'
+set -o posix
+echo "${foo-'}'}"
+EOF
+)
+[ "$res" = "''}" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
