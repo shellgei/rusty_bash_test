@@ -55,6 +55,9 @@ EOF
 )
 [ "$res" = "''}" ] || err $LINENO
 
+res=$($com <<< 'printf -v ret %q ""; echo "$ret"')
+[ "$res" = "''" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
