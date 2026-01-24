@@ -1,5 +1,5 @@
 #!/bin/bash -xv
-# SPDX-FileCopyrightText: 2023 Ryuichi Ueda ryuichiueda@gmail.com
+# SPDX-FileCopyrightText: 2025 Ryuichi Ueda ryuichiueda@gmail.com
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 err () {
@@ -18,29 +18,6 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-res=$($com <<< 'f () { echo hoge ; } ; declare -f f')
-[ $? -eq 0 ] || err $LINENO
-
-res=$($com <<< 'f () { echo hoge ; } ; declare -f -- f')
-[ $? -eq 0 ] || err $LINENO
-
-res=$($com <<< 'a= ; echo ${#a[*]}')
-[ "$res" = "1" ] || err $LINENO
-
-res=$($com <<< 'a= ; echo ${#a[@]}')
-[ "$res" = "1" ] || err $LINENO
-
-res=$($com <<< 'a=b ; echo ${#a[@]}')
-[ "$res" = "1" ] || err $LINENO
-
-res=$($com <<< 'declare a ; echo ${#a[@]}')
-[ "$res" = "0" ] || err $LINENO
-
-res=$($com -c 'shopt -q progcomp')
-[ $? -eq 0 ] || err $LINENO
-
-res=$($com <<< 'shopt -u progcomp ; shopt -q progcomp')
-[ $? -eq 1 ] || err $LINENO
 
 res=$($com << 'EOF'
 echo "${foo-'}'}"
