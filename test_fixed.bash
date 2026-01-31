@@ -35,6 +35,9 @@ EOF
 res=$($com <<< 'printf -v ret %q ""; echo "$ret"')
 [ "$res" = "''" ] || err $LINENO
 
+res=$($com <<< 'f () { local a=bbb ; unset a ; } ; a=ccc ; f ; echo $a')
+[ "$res" = "ccc" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
