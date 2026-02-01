@@ -82,6 +82,9 @@ echo $x -- $?
 ')
 [ "$res" = "X -- 1" ] || err $LINENO
 
+res=$($com <<< 'f () { local a=bbb ; unset a ; } ; a=ccc ; f ; echo $a')
+[ "$res" = "ccc" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
