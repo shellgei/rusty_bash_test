@@ -88,6 +88,15 @@ res=$($com <<< 'f () { local a=bbb ; unset a ; } ; a=ccc ; f ; echo $a')
 res=$($com <<< 'set -a ; aaa=bbb ; env | grep ^aaa')
 [ "$res" = "aaa=bbb" ] || err $LINENO
 
+res=$($com <<< 'set -f ; echo *')
+[ "$res" = '*' ] || err $LINENO
+
+res=$($com -n <<< 'ls aaaaaaaaaaaaa')
+[ "$?" -eq 0 ] || err $LINENO
+
+res=$($com -n <<< '((')
+[ "$?" -eq 2 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
