@@ -85,6 +85,9 @@ echo $x -- $?
 res=$($com <<< 'f () { local a=bbb ; unset a ; } ; a=ccc ; f ; echo $a')
 [ "$res" = "ccc" ] || err $LINENO
 
+res=$($com <<< 'set -a ; aaa=bbb ; env | grep ^aaa')
+[ "$res" = "aaa=bbb" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
