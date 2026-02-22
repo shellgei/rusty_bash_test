@@ -97,6 +97,12 @@ res=$($com -n <<< 'ls aaaaaaaaaaaaa')
 res=$($com -n <<< '((')
 [ "$?" -eq 2 ] || err $LINENO
 
+res=$($com <<< 'set -- -n ; [ "$1" = "-n" ]')
+[ "$?" -eq 0 ] || err $LINENO
+
+res=$($com <<< 'test -n ""')
+[ "$?" -eq 1 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
