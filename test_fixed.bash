@@ -21,6 +21,9 @@ cd "$test_dir"
 res=$($com <<< 'enable | wc -l')
 [ "$res" -gt 10 ] || err $LINENO
 
+res=$($com <<< 'enable -n readonly ; enable | grep readonly')
+[ "$?" -ne 0 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
