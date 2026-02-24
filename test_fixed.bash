@@ -18,8 +18,8 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-#res=$($com <<< 'test -n ""')
-#[ "$?" -eq 1 ] || err $LINENO
+res=$($com <<< 'enable | wc -l')
+[ "$res" -gt 10 ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
