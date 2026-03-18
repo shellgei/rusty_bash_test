@@ -27,6 +27,9 @@ res=$($com <<< 'enable -n readonly ; enable | grep readonly')
 res=$($com <<< 'ulimit -n 256; ulimit -n')
 [ "$res" = "256" ] || err $LINENO
 
+res=$($com <<< 'read -ru3 x 3< <(echo bbb); echo $x')
+[ "$res" = "bbb" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
