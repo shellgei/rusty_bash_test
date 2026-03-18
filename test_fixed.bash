@@ -24,6 +24,9 @@ res=$($com <<< 'enable | wc -l')
 res=$($com <<< 'enable -n readonly ; enable | grep readonly')
 [ "$?" -ne 0 ] || err $LINENO
 
+res=$($com <<< 'ulimit -n 256; ulimit -n')
+[ "$res" = "256" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
