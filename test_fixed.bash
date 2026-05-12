@@ -30,6 +30,14 @@ res=$($com <<< 'ulimit -n 256; ulimit -n')
 res=$($com <<< 'read -ru3 x 3< <(echo bbb); echo $x')
 [ "$res" = "bbb" ] || err $LINENO
 
+### FIX IT!!! ###
+#res=$($com <<< 'echo ${a"}')
+#[ "$?" -eq 2 ] || err $LINENO
+
+res=$($com <<< 'coproc REFLECT { cat - ; } ; kill $REFLECT_PID')
+ps u | grep '[c]at -'
+[ "$?" -eq 1 ] || { killall cat ; err $LINENO ; }
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
