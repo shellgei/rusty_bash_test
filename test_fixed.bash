@@ -44,6 +44,9 @@ res=$($com <<< 'exec 4>/tmp/exec4 ; echo aaa >&4; cat /tmp/exec4; rm /tmp/exec4'
 res=$($com <<< 'exec 3>/tmp/exec3 ; echo aaa >&3; cat /tmp/exec3; rm /tmp/exec3')
 [ "$res" = "aaa" ] || err $LINENO
 
+res=$($com <<< 'exec 5>/tmp/exec5; exec 4<&5-; echo hoge >&4; cat /tmp/exec5 ;rm /tmp/exec5')
+[ "$res" = "hoge" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
