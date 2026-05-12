@@ -34,9 +34,15 @@ res=$($com <<< 'read -ru3 x 3< <(echo bbb); echo $x')
 #res=$($com <<< 'echo ${a"}')
 #[ "$?" -eq 2 ] || err $LINENO
 
-res=$($com <<< 'coproc REFLECT { cat - ; } ; kill $REFLECT_PID')
+res=$($com <<< 'coproc REFLECT { cat - ; } ; kill $REFLECT_PID; sleep 1')
 ps u | grep '[c]at -'
 [ "$?" -eq 1 ] || { killall cat ; err $LINENO ; }
+
+res=$($com <<< 'exec 4>/tmp/exec4 ; echo aaa >&4; cat /tmp/exec4; rm /tmp/exec4')
+[ "$res" = "aaa" ] || err $LINENO
+
+res=$($com <<< 'exec 3>/tmp/exec3 ; echo aaa >&3; cat /tmp/exec3; rm /tmp/exec3')
+[ "$res" = "aaa" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
