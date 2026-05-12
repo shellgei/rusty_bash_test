@@ -47,6 +47,13 @@ res=$($com <<< 'exec 3>/tmp/exec3 ; echo aaa >&3; cat /tmp/exec3; rm /tmp/exec3'
 res=$($com <<< 'exec 5>/tmp/exec5; exec 4<&5-; echo hoge >&4; cat /tmp/exec5 ;rm /tmp/exec5')
 [ "$res" = "hoge" ] || err $LINENO
 
+res=$($com <<< 'coproc cat - ; exec 3<&${COPROC[1]}- ; echo ${COPROC[@]};killall cat')
+[ "$res" = "63 -1" ] || err $LINENO
+
+res=$($com <<< 'coproc cat - ; exec 3>&${COPROC[0]}- ; echo ${COPROC[@]};killall cat')
+[ "$res" = "-1 60" ] || err $LINENO
+
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
