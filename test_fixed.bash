@@ -30,6 +30,14 @@ res=$($com <<< 'ulimit -n 256; ulimit -n')
 res=$($com <<< 'read -ru3 x 3< <(echo bbb); echo $x')
 [ "$res" = "bbb" ] || err $LINENO
 
+res=$($com <<< 'A=abc; echo ${A::}')
+[ "$?" -eq 0 ] || err $LINENO
+[ "$res" = "" ] || err $LINENO
+
+res=$($com <<< 'A=abc; echo ${A::2}')
+[ "$?" -eq 0 ] || err $LINENO
+[ "$res" = "ab" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
