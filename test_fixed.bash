@@ -24,8 +24,10 @@ res=$($com <<< 'enable | wc -l')
 res=$($com <<< 'enable -n readonly ; enable | grep readonly')
 [ "$?" -ne 0 ] || err $LINENO
 
-res=$($com <<< 'ulimit -n 256; ulimit -n')
-[ "$res" = "256" ] || err $LINENO
+if [ "$(uname)" = Linux ] ; then
+	res=$($com <<< 'ulimit -n 256; ulimit -n')
+	[ "$res" = "256" ] || err $LINENO
+fi
 
 res=$($com <<< 'read -ru3 x 3< <(echo bbb); echo $x')
 [ "$res" = "bbb" ] || err $LINENO
