@@ -27,6 +27,12 @@ res=$($com <<< 'echo " a  b\ " | ( read x ; echo -"$x"- )')
 res=$($com <<< 'echo "a b " | ( read x y z ; echo ${z-z not set} 2>&1 )')
 [ "$res" = "" ] || err $LINENO
 
+res=$($com <<< 'echo "A B " | ( read ; echo "[$REPLY]" )')
+[ "$res" = "[A B ]" ] || err $LINENO
+
+res=$($com <<< 'echo " A B " | ( read ; echo "[$REPLY]" )')
+[ "$res" = "[ A B ]" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
