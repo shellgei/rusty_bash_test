@@ -33,6 +33,12 @@ res=$($com <<< 'echo "A B " | ( read ; echo "[$REPLY]" )')
 res=$($com <<< 'echo " A B " | ( read ; echo "[$REPLY]" )')
 [ "$res" = "[ A B ]" ] || err $LINENO
 
+res=$($com <<< '(sleep 2 ; echo aaa) | read -t 1 a ; echo $a')
+[ "$res" = "" ] || err $LINENO
+
+res=$($com <<< '(sleep 2 ; echo aaa) | read -t 1 a')
+[ $? -gt 128 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
