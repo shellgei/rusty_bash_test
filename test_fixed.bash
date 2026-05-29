@@ -39,6 +39,31 @@ res=$($com <<< '(sleep 2 ; echo aaa) | read -t 1 a ; echo $a')
 res=$($com <<< '(sleep 2 ; echo aaa) | read -t 1 a')
 [ $? -gt 128 ] || err $LINENO
 
+res=$($com <<< 'echo ${A:aaa} ${A:"aaa"}')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com << 'EOF'
+echo ${A:'aaa'}
+EOF
+)
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'A= ; echo ${A:aaa} ${A:"aaa"}')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com << 'EOF'
+A=
+echo ${A:'aaa'}
+EOF
+)
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'A=abc; echo ${A:13:23:3aa}')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'A=abc; echo ${A:1:23:3aa}')
+[ $? -eq 1 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
