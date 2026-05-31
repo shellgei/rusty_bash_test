@@ -24,10 +24,17 @@ res=$($com /bin/sh)
 res=$($com << 'EOF'
 trap 'echo USR1' USR1
 kill -s USR1 $$
-sleep 1
+sleep 0.5
+sleep 0.5
 EOF
 )
 [ "$res" = "USR1" ] || err $LINENO
+
+cat << 'EOF' | $com
+trap 'true' EXIT
+false
+EOF
+[ $? -eq 1 ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok

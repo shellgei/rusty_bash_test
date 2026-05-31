@@ -692,7 +692,7 @@ res=$($com <<< 'printf "%i\n" 42')
 res=$($com <<< 'trap "echo hoge" 4') # 4 (SIGILL) is forbidden by signal_hook
 [ $? -eq 1 ] || err $LINENO
 
-res=$($com <<< 'trap "echo hoge" QUIT; kill -3 $$; sleep 1')
+res=$($com <<< 'trap "echo hoge" QUIT; kill -3 $$; sleep 0.5 ; sleep 0.5')
 [ "$res" = "hoge" ] || err $LINENO
 
 res=$($com <<< 'trap "echo hoge" 444444') 
