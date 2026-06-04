@@ -36,6 +36,13 @@ false
 EOF
 [ $? -eq 1 ] || err $LINENO
 
+
+res=$($com <<< 'A=久里浜YRP野比長沢; echo ${A:3:-1}')
+[ "$res" = "YRP野比長" ] || err $LINENO
+
+res=$($com <<< 'A=久里浜YRP野比長沢; echo ${A:3:-2}')
+[ "$res" = "YRP野比" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
