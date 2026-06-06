@@ -36,6 +36,9 @@ false
 EOF
 [ $? -eq 1 ] || err $LINENO
 
+res=$($com <<< 'PATH=/ ; command -pv bash')
+[ $? -eq 0 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
