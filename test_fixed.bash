@@ -51,8 +51,8 @@ res=$($com <<< "echo {$'\x0'..a}")
 res=$($com <<< 'printf \\0\\7 | xxd -ps')
 [ "$res" = "0007" ] || err $LINENO
 
-#res=$($com <<< 'printf \\777 | xxd -ps')
-#[ "$res" = "ff" ] || err $LINENO
+res=$($com <<< 'printf \\777 | xxd -ps')
+[ "$res" = "ff" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
