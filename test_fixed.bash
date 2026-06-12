@@ -45,6 +45,15 @@ res=$($com <<< 'A=久里浜YRP野比長沢; echo ${A:3:-1}')
 res=$($com <<< 'A=久里浜YRP野比長沢; echo ${A:3:-2}')
 [ "$res" = "YRP野比" ] || err $LINENO
 
+res=$($com <<< "echo {$'\x0'..a}")
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'printf \\0\\7 | xxd -ps')
+[ "$res" = "0007" ] || err $LINENO
+
+#res=$($com <<< 'printf \\777 | xxd -ps')
+#[ "$res" = "ff" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
