@@ -24,6 +24,8 @@ res=$($com <<< 'for invalid-name in a b c; do echo error; done')
 res=$($com <<< 'for i do ii aaa ; done')
 [ $? -eq 0 ] || err $LINENO
 
+res=$($com <<< 'select a in b c d ; do echo $a ; done <<< 2')
+[ "$res" = "c" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
