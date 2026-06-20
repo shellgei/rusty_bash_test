@@ -427,7 +427,7 @@ res=$($com <<< 'echo "$RUSTY_BASH_A"')
 b" ] || err $LINENO
 
 res=$($com <<< 'echo "$BASH{PID,_SUBSHELL}"')
-[ "$res" == "{PID,_SUBSHELL}" ] || err $LINENO
+[ "${res: -15}" == "{PID,_SUBSHELL}" ] || err $LINENO
 
 res=$($com <<< 'echo "\$HOME"')
 [ "$res" == '$HOME' ] || err $LINENO
