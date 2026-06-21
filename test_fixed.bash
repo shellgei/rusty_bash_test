@@ -44,6 +44,24 @@ res=$($com <<< 'declare -i i
 i=0#4' 2>&1 | tr -dc 1-3 )
 [ "$res" = "2" ] || err $LINENO
 
+res=$($com <<< '
+until (( x == 4 ))
+do
+        echo $x
+        x=4
+done
+')
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'fuあnc() { echo aho ; }; fuあnc')
+[ "$res" = "aho" ] || err $LINENO
+
+res=$($com <<< 'fu%nc() { echo aho ; }; fu%nc')
+[ "$res" = "aho" ] || err $LINENO
+
+res=$($com <<< 'for ((i = 0; ;i++ )) ; do echo $i ; exit 0; done')
+[ "$res" = "0" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
