@@ -27,6 +27,11 @@ res=$($com <<< 'for i do ii aaa ; done')
 res=$($com <<< 'select a in b c d ; do echo $a ; done <<< 2')
 [ "$res" = "c" ] || err $LINENO
 
+res=$($com <<< 'for (( i = 0; i < 2; i++ )) { echo $i ; }')
+[ $? -eq 0 ] || err $LINENO
+[ "$res" = "0
+1" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
