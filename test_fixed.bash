@@ -32,6 +32,18 @@ res=$($com <<< 'for (( i = 0; i < 2; i++ )) { echo $i ; }')
 [ "$res" = "0
 1" ] || err $LINENO
 
+res=$($com <<< '
+a[b[c]d]=e' 2>&1 | tr -dc 0-9 )
+[ "$res" = "2" ] || err $LINENO
+
+res=$($com <<< '
+let "rv = 7 + (43 * 6"' 2>&1 | tr -dc 0-3 )
+[ "$res" = "2" ] || err $LINENO
+
+res=$($com <<< 'declare -i i
+i=0#4' 2>&1 | tr -dc 1-3 )
+[ "$res" = "2" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
