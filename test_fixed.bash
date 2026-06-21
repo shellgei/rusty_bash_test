@@ -62,6 +62,29 @@ res=$($com <<< 'fu%nc() { echo aho ; }; fu%nc')
 res=$($com <<< 'for ((i = 0; ;i++ )) ; do echo $i ; exit 0; done')
 [ "$res" = "0" ] || err $LINENO
 
+#res=$(bash <<< 'a () { echo a | rev | rev & } ; declare -f a')
+#[ "$res" = 'a ()
+#{
+#    echo a | rev | rev &
+#}
+#' ] || err $LINENO
+
+res=$($com <<< '
+f1()
+{
+	local zz
+	zz=abcde
+	unset zz
+	zz=defghi
+}
+
+zz=ZZ
+f1
+echo $zz
+')
+[ "$res" = "ZZ" ] || err $LINENO
+
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
