@@ -84,6 +84,8 @@ echo $zz
 ')
 [ "$res" = "ZZ" ] || err $LINENO
 
+res=$($com <<< 'cat <(exit 3) > /dev/null ; wait $!; echo $?')
+[ "$res" = "3" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
