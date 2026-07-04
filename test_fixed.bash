@@ -36,6 +36,10 @@ false
 EOF
 [ $? -eq 1 ] || err $LINENO
 
+
+res=$($com <<< 'declare -n ref=XXX[0]; read -a ref <<< "A B C"')
+[ $? -eq 1 ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
