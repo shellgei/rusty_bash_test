@@ -51,6 +51,7 @@ cd "$test_dir"
 ./test_fixed_v1.2.7.bash nobuild "$repo_dir" &
 ./test_fixed_v1.2.9.bash nobuild "$repo_dir" &
 ./test_fixed_v1.3.0.bash nobuild "$repo_dir" &
+./test_fixed_v1.3.1.bash nobuild "$repo_dir" &
 
 wait 
 
