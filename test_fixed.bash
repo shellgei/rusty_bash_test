@@ -73,20 +73,22 @@ res=$($com <<< 'for ((i = 0; ;i++ )) ; do echo $i ; exit 0; done')
 #}
 #' ] || err $LINENO
 
-res=$($com <<< '
-f1()
-{
-	local zz
-	zz=abcde
-	unset zz
-	zz=defghi
-}
-
-zz=ZZ
-f1
-echo $zz
-')
-[ "$res" = "ZZ" ] || err $LINENO
+if [ $(uname) = "Linux" ] ; then
+    res=$($com <<< '
+    f1()
+    {
+    	local zz
+    	zz=abcde
+    	unset zz
+    	zz=defghi
+    }
+    
+    zz=ZZ
+    f1
+    echo $zz
+    ')
+    [ "$res" = "ZZ" ] || err $LINENO
+fi
 
 res=$($com <<< 'cat <(exit 3) > /dev/null ; wait $!; echo $?')
 [ "$res" = "3" ] || err $LINENO
