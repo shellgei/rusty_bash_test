@@ -21,6 +21,10 @@ cd "$test_dir"
 res=$($com <<< 'for invalid-name in a b c; do echo error; done')
 [ $? -eq 1 ] || err $LINENO
 
+
+res=$($com <<< 'declare -n ref=XXX[0]; read -a ref <<< "A B C"')
+[ $? -eq 1 ] || err $LINENO
+
 res=$($com <<< 'for i do ii aaa ; done')
 [ $? -eq 0 ] || err $LINENO
 
@@ -69,20 +73,25 @@ res=$($com <<< 'for ((i = 0; ;i++ )) ; do echo $i ; exit 0; done')
 #}
 #' ] || err $LINENO
 
-res=$($com <<< '
-f1()
-{
-	local zz
-	zz=abcde
-	unset zz
-	zz=defghi
-}
+if [ $(uname) = "Linux" ] ; then
+    res=$($com <<< '
+    f1()
+    {
+    	local zz
+    	zz=abcde
+    	unset zz
+    	zz=defghi
+    }
+    
+    zz=ZZ
+    f1
+    echo $zz
+    ')
+    [ "$res" = "ZZ" ] || err $LINENO
+fi
 
-zz=ZZ
-f1
-echo $zz
-')
-[ "$res" = "ZZ" ] || err $LINENO
+res=$($com <<< 'cat <(exit 3) > /dev/null ; wait $!; echo $?')
+[ "$res" = "3" ] || err $LINENO
 
 res=$($com <<< 'f() { printenv A ; } ; A=333 f')
 [ "$res" = "333" ] || err $LINENO
@@ -96,6 +105,9 @@ x=1' |& cat | grep "line 2:")
 
 res=$($com <<< 'shopt -s extdebug; f() { return 2; }; trap f DEBUG; echo hoge')
 [ "$res" = "" ] || err $LINENO
+
+res=$($com <<< 'moo() { ls "$1" ; ls "$1" ; } ; moo >(true)')
+[ $? -eq 0 ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
