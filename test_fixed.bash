@@ -84,6 +84,18 @@ echo $zz
 ')
 [ "$res" = "ZZ" ] || err $LINENO
 
+res=$($com <<< 'f() { printenv A ; } ; A=333 f')
+[ "$res" = "333" ] || err $LINENO
+
+res=$($com <<< 'echo $$; moo() { ls -l "$1" ; ls -l "$1" ;  }; moo >(true)')
+[ $? -eq 0 ] || err $LINENO
+
+res=$(LANG=C $com <<< 'trap 'aaaa' DEBUG
+x=1' |& cat | grep "line 2:")
+[ $? -eq 0 ] || err $LINENO
+
+res=$($com <<< 'shopt -s extdebug; f() { return 2; }; trap f DEBUG; echo hoge')
+[ "$res" = "" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
