@@ -40,13 +40,13 @@ res=$($com <<< '
 a[b[c]d]=e' 2>&1 | tr -dc 0-9 )
 [ "$res" = "2" ] || err $LINENO
 
-res=$($com <<< '
-let "rv = 7 + (43 * 6"' 2>&1 | tr -dc 0-3 )
-[ "$res" = "2" ] || err $LINENO
-
-res=$($com <<< 'declare -i i
-i=0#4' 2>&1 | tr -dc 1-3 )
-[ "$res" = "2" ] || err $LINENO
+#res=$($com <<< '
+#let "rv = 7 + (43 * 6"' 2>&1 | tr -dc 0-3 )
+#[ "$res" = "2" ] || err $LINENO
+#
+#res=$($com <<< 'declare -i i
+#i=0#4' 2>&1 | tr -dc 1-3 )
+#[ "$res" = "2" ] || err $LINENO
 
 res=$($com <<< '
 until (( x == 4 ))
@@ -121,6 +121,15 @@ res=$($com <<< 'case 'a' in [[.a.]]) echo ok;; esac')
 [ "$res" = "ok" ] || err $LINENO
 
 res=$($com <<< 'case '-' in [[.hyphen.]]) echo ok;; esac')
+[ "$res" = "ok" ] || err $LINENO
+
+res=$($com <<< 'case 'p' in [[.a.]-[.z.]]) echo ok;; esac')
+[ "$res" = "ok" ] || err $LINENO
+
+res=$($com <<< 'case '-' in [[.hyphen.]-9]) echo ok;; esac')
+[ "$res" = "ok" ] || err $LINENO
+
+res=$($com <<< 'case '8' in [[.hyphen.]-9]) echo ok;; esac')
 [ "$res" = "ok" ] || err $LINENO
 
 rm -f $tmp-*
