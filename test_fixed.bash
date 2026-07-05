@@ -109,6 +109,14 @@ res=$($com <<< 'shopt -s extdebug; f() { return 2; }; trap f DEBUG; echo hoge')
 res=$($com <<< 'moo() { ls "$1" ; ls "$1" ; } ; moo >(true)')
 [ $? -eq 0 ] || err $LINENO
 
+res=$($com <<< '
+case a in
+[[:al:])	echo bad;;
+*)		echo ok;;
+esac
+')
+[ "$res" = "ok" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
