@@ -117,6 +117,12 @@ esac
 ')
 [ "$res" = "ok" ] || err $LINENO
 
+res=$($com <<< 'case 'a' in [[.a.]]) echo ok;; esac')
+[ "$res" = "ok" ] || err $LINENO
+
+res=$($com <<< 'case '-' in [[.hyphen.]]) echo ok;; esac')
+[ "$res" = "ok" ] || err $LINENO
+
 rm -f $tmp-*
 echo $0 >> ./ok
 exit
