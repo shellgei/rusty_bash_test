@@ -54,20 +54,19 @@ res=$($com <<< 'case '8' in [[.hyphen.]-9]) echo ok;; esac')
 res=$($com <<< 'shopt -s nocasematch ; A=abc ; echo ${A%C}')
 [ "$res" = "ab" ] || err $LINENO
 
-#res=$($com <<< '
-#arrayA=("A" "B" "C")
-#xx="arrayA[@]"
-#
-#arrayB=(  "${arrayA[@]}"  )
-#echo "${#arrayB[@]}---${arrayB[0]}:${arrayB[1]}:${arrayB[2]}"
+res=$($com <<< '
+arrayA=("A" "B" "C")
+xx="arrayA[@]"
+
+arrayB=(  "${arrayA[@]}"  )
+echo "${#arrayB[@]}---${arrayB[0]}:${arrayB[1]}:${arrayB[2]}"
 #arrayB=(  ${!xx}  )
 #echo "${#arrayB[@]}---${arrayB[0]}:${arrayB[1]}:${arrayB[2]}"
-#arrayB=( "${!xx}" )
-#echo "${#arrayB[@]}---${arrayB[0]}:${arrayB[1]}:${arrayB[2]}"
-#')
-#[ "$res" = "3---A:B:C
-#3---A:B:C
-#3---A:B:C" ] || err $LINENO
+arrayB=( "${!xx}" )
+echo "${#arrayB[@]}---${arrayB[0]}:${arrayB[1]}:${arrayB[2]}"
+')
+[ "$res" = "3---A:B:C
+3---A:B:C" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
