@@ -18,7 +18,7 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
-res=$(LANG=C $com <<< 'trap 'aaaa' DEBUG
+res=$(LANG=C $com <<< 'trap "aaaa" DEBUG
 x=1' |& cat | grep "line 2:")
 [ $? -eq 0 ] || err $LINENO
 
