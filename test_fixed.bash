@@ -19,7 +19,7 @@ tmp=/tmp/$$
 cd "$test_dir"
 
 res=$(LANG=C $com <<< 'trap "aaaa" DEBUG
-x=1' 2>&1 | cat | grep "line 2:")
+x=1' 2>&1 | grep "line 2:")
 [ $? -eq 0 ] || err $LINENO
 
 res=$($com <<< 'shopt -s extdebug; f() { return 2; }; trap f DEBUG; echo hoge')
@@ -67,6 +67,9 @@ echo "${#arrayB[@]}---${arrayB[0]}:${arrayB[1]}:${arrayB[2]}"
 ')
 [ "$res" = "3---A:B:C
 3---A:B:C" ] || err $LINENO
+
+res=$($com <<< 'echo ${?:1:0}')
+[ "$res" = "" ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
