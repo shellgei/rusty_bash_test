@@ -18,6 +18,11 @@ tmp=/tmp/$$
 [ "$1" == "nobuild" ] || cargo build || err $LINENO
 cd "$test_dir"
 
+res=$($com <<< '((a=0, a++, a<1))')
+[ $? -eq 1 ] || err $LINENO
+
+res=$($com <<< 'a=0; ((a++, a<1))')
+[ $? -eq 1 ] || err $LINENO
 
 rm -f $tmp-*
 echo $0 >> ./ok
